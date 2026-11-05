@@ -159,11 +159,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdd2fff6e7cfc744788690b9d20be5f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gun
-  damage: 10
-  range: 100
-  impactForce: 30
-  barrel: {fileID: 1762730057545343019}
-  tracer: {fileID: 0}
+  bulletprefab: {fileID: 9015415349364151523, guid: 78018aad95915bd46b639aee3985bef5, type: 3}
+  firepos: {fileID: 1762730057545343019}
+  bulletSpeed: 20
 --- !u!1 &3497454323975897416
 GameObject:
   m_ObjectHideFlags: 0
