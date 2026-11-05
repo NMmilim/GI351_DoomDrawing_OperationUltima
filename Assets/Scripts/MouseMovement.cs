@@ -1,32 +1,39 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 public class MouseMovement : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public float mousesens = 100f;
+    public float mousesens = 10f;
+    public Transform playerBody;
+
     float xrot;
-    float yrot;
+
     void Start()
     {
         // Lock the cursor to the center of the screen
         Cursor.lockState = CursorLockMode.Locked;
+
+        // Auto-assign playerBody if Camera is a child of Player
+        if (playerBody == null && transform.parent != null)
+        {
+            playerBody = transform.parent;
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector2 mouseDelta = Mouse.current != null ? Mouse.current.delta.ReadValue() : Vector2.zero;
+
         // Get the mouse input
-        float mouseX = mouseDelta.x * mousesens;
-        float mouseY = mouseDelta.y * mousesens;
-        // Update the rotation values based on mouse input
-        xrot += mouseY;
-        //clamp rotation
+        float mouseX = mouseDelta.x * mousesens * Time.deltaTime;
+        float mouseY = mouseDelta.y * mousesens * Time.deltaTime;
+
+        // Up/down rotation (Pitch) - only tilts the camera
+        xrot -= mouseY;
         xrot = Mathf.Clamp(xrot, -90f, 90f);
-        // Apply the rotation to the camera
-        yrot += mouseX;
-        yrot = Mathf.Clamp(yrot, -90f, 90f);
-        //Appply the rotation to the transform
-        transform.localRotation = Quaternion.Euler(xrot, yrot, 0f);
+        transform.localRotation = Quaternion.Euler(xrot, 0f, 0f);
+
+        // Left/right rotation (Yaw) - turns the player body
+        if (playerBody != null){ playerBody.Rotate(Vector3.up * mouseX);}
     }
 }

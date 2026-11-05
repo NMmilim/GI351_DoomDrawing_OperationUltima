@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public Transform groundCheck;
     public float groundDistance = 0.4f;
     public LayerMask groundLayer;
-
+    public float gravity;
     private Vector3 velocity;
     private bool isGrounded;
     bool isMoving;
@@ -36,10 +36,10 @@ public class PlayerMovement : MonoBehaviour
         float z = 0f;
         if (Keyboard.current != null)
         {
-            if (Keyboard.current.dKey.isPressed ) x -= 1f;
-            if (Keyboard.current.aKey.isPressed ) x += 1f;
-            if (Keyboard.current.wKey.isPressed ) z -= 1f;
-            if (Keyboard.current.sKey.isPressed ) z += 1f;
+            if (Keyboard.current.dKey.isPressed ) x += 1f;
+            if (Keyboard.current.aKey.isPressed ) x -= 1f;
+            if (Keyboard.current.wKey.isPressed ) z += 1f;
+            if (Keyboard.current.sKey.isPressed ) z -= 1f;
         }
 
         //Creating the moving Vector
@@ -51,22 +51,16 @@ public class PlayerMovement : MonoBehaviour
         if (jumpPressed && isGrounded)
         {
             //Actually Jumping
-            velocity.y = Mathf.Sqrt(jumpForce * -2f * Physics.gravity.y);
+            velocity.y = Mathf.Sqrt(jumpForce * -2f * gravity);
         }
 
         //falling down
-        velocity.y += Physics.gravity.y * Time.deltaTime;
+        velocity.y += gravity * Time.deltaTime;
         //Executing the falling down
         controller.Move(velocity * Time.deltaTime);
 
-        if (LastPos != transform.position && isGrounded == true)
-        {
-            isMoving = true;
-        }
-        else
-        {
-            isMoving = false;
-        }
+        isMoving = (LastPos != transform.position && isGrounded == true) ? true : false;
         LastPos = transform.position;
+        speed = (Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed && isMoving) ? 10f : 5f;
     }
 }
