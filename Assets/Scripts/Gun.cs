@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -22,14 +20,33 @@ public class Gun : MonoBehaviour
 
     void Shoot()
     {
-        // Combine gun's rotation with the prefab's rotation so your 90-degree tilt is preserved
+        if (bulletprefab == null || firepos == null) return;
+
+        // Combine gun's rotation with the prefab's rotation so 90-degree tilt is preserved
         Quaternion bulletRotation = firepos.rotation * bulletprefab.rotation;
         Transform bullet = Instantiate(bulletprefab, firepos.position, bulletRotation);
 
-        // Apply force to the clone
-        bullet.GetComponent<Rigidbody>().AddForce(firepos.forward.normalized * bulletSpeed, ForceMode.Impulse);
+        // Ignore collisions between this bullet and the entire player
+        Collider bulletCol = bullet.GetComponent<Collider>();
+        if (bulletCol != null)
+        {
+            Collider[] parentColliders = GetComponentsInParent<Collider>(true);
+            foreach (Collider c in parentColliders)
+            {
+                if (c != null && c.enabled)
+                {
+                    Physics.IgnoreCollision(bulletCol, c, true);
+                }
+            }
+        }
 
-        // Destroy the clone after 3 seconds
+        // Apply impulse velocity
+        Rigidbody rb = bullet.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.AddForce(firepos.forward.normalized * bulletSpeed, ForceMode.Impulse);
+        }
+
         Destroy(bullet.gameObject, bulletlife);
     }
 }

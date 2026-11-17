@@ -5,7 +5,11 @@ public class Game : MonoBehaviour
 {
     void Start()
     {
-
+        // Automatically ensure the Wrath Boss encounter and combat systems are spawned
+        if (GetComponent<WrathBossSpawner>() == null)
+        {
+            gameObject.AddComponent<WrathBossSpawner>();
+        }
     }
 
     void Update()
