@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float speed = 5f;
+    public float speed = 2f;
     public float jumpForce = 5f;
     public float stamina = 100f;
     public float maxStamina = 100f;
@@ -117,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            speed = 5f; // Normal walk speed
+            speed = 2f; // Normal walk speed
             stamina += 10f * Time.deltaTime; // Recover stamina
         }
 stamina = Mathf.Clamp(stamina, 0f, maxStamina);
