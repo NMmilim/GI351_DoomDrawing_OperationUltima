@@ -117,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            speed = 2f; // Normal walk speed
+            speed = speed; // Normal walk speed
             stamina += 10f * Time.deltaTime; // Recover stamina
         }
 stamina = Mathf.Clamp(stamina, 0f, maxStamina);

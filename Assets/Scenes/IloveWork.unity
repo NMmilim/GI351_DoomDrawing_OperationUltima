@@ -9142,15 +9142,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7462517000825853182, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
       propertyPath: speed
-      value: 2
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7462517000825853182, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
+      propertyPath: stamina
+      value: 50000000
       objectReference: {fileID: 0}
     - target: {fileID: 7462517000825853182, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
       propertyPath: dashDamp
-      value: 10
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 7462517000825853182, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
       propertyPath: dashForce
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7462517000825853182, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
+      propertyPath: maxStamina
+      value: 50000000
       objectReference: {fileID: 0}
     - target: {fileID: 7462517000825853182, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
       propertyPath: slideDuration
