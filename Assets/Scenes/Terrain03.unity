@@ -637,9 +637,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.DecalProjector
   m_Material: {fileID: 2100000, guid: 5ec9ae8947089d547a2cdce7088f675f, type: 2}
   m_DrawDistance: 1000
-  m_FadeScale: 0.9
+  m_FadeScale: 0.907
   m_StartAngleFade: 0
-  m_EndAngleFade: 27.402985
+  m_EndAngleFade: 19.343285
   m_UVScale: {x: 1, y: 1}
   m_UVBias: {x: 0, y: 0}
   m_RenderingLayerMask:
@@ -648,7 +648,7 @@ MonoBehaviour:
   m_ScaleMode: 0
   m_Offset: {x: 0, y: 0, z: 0}
   m_Size: {x: 300, y: 300, z: 600}
-  m_FadeFactor: 0.953
+  m_FadeFactor: 1
   m_VisibleInScene: 1
   version: 1
   m_DecalLayerMask: 1
