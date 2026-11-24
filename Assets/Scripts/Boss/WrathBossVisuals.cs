@@ -118,6 +118,8 @@ public class WrathBossVisuals : MonoBehaviour
         BossWeakpoint wp = part.AddComponent<BossWeakpoint>();
         wp.bodyPart = bodyPart;
         wp.bossHealth = health;
+        wp.ApplyPartDefaults();
+        wp.usePartDefaults = false;
         wp.damageMultiplier = multiplier;
     }
 

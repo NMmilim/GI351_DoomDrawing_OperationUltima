@@ -1,10 +1,11 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 /// <summary>
 /// State Machine AI for Wrath (The First Sin) — A brutal, heavy behemoth boss.
-/// Supports both NavMesh and direct-steering navigation so it functions immediately in any scene.
+/// Model-agnostic: works on any custom Prefab with or without an Animator or WrathBossVisuals.
 /// </summary>
 [RequireComponent(typeof(BossHealth))]
 [RequireComponent(typeof(BossTelegraph))]
@@ -30,6 +31,10 @@ public class WrathBossAI : MonoBehaviour
     public float stalkSpeed = 4.5f;
     public float rotationSpeed = 120f;
     public float idealCombatDistance = 8f;
+
+    [Header("Optional Art / Animation Hook")]
+    [Tooltip("Optional Animator on your 3D model. Auto-found in children if left empty. Safe to leave unassigned.")]
+    public Animator animator;
 
     [Header("Bull Charge Attack")]
     public float chargeWindup = 1.2f;
@@ -60,6 +65,7 @@ public class WrathBossAI : MonoBehaviour
     private NavMeshAgent        _navAgent;
     private CharacterController _characterController;
     private WrathBossVisuals    _visuals;
+    private HashSet<string>     _animParams;
 
     // State Machine Variables
     private BossState _state = BossState.Stalking;
@@ -67,9 +73,13 @@ public class WrathBossAI : MonoBehaviour
     private float     _attackCooldown;
     private Vector3   _chargeDirection;
     private Vector3   _chargeStartPos;
+    private float     _chargeMaxTime;
+    private float     _chargeElapsed;
     private bool      _hasDealtChargeHit;
+    private Coroutine _activeAttackCoroutine;
 
     public BossState CurrentState => _state;
+    public event System.Action<BossState> OnStateChanged;
 
     private void Awake()
     {
@@ -79,10 +89,70 @@ public class WrathBossAI : MonoBehaviour
         _characterController = GetComponent<CharacterController>();
         _visuals   = GetComponent<WrathBossVisuals>();
 
+        if (animator == null)
+        {
+            animator = GetComponentInChildren<Animator>();
+        }
+        CacheAnimatorParameters();
+
         if (_navAgent != null)
         {
             _navAgent.updateRotation = false; // We rotate toward player manually
             _navAgent.speed = stalkSpeed;
+        }
+    }
+
+    private void CacheAnimatorParameters()
+    {
+        _animParams = new HashSet<string>();
+        if (animator == null || animator.runtimeAnimatorController == null) return;
+
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            _animParams.Add(param.name);
+        }
+    }
+
+    private void SetState(BossState newState)
+    {
+        if (_state == newState) return;
+        _state = newState;
+        OnStateChanged?.Invoke(newState);
+
+        // Optional Animator hooks (safe no-op if no Animator or parameters aren't created yet)
+        TrySetAnimBool("IsMoving", newState == BossState.Stalking);
+        TrySetAnimBool("IsStaggered", newState == BossState.Staggered);
+        TrySetAnimBool("IsDead", newState == BossState.Defeated);
+
+        switch (newState)
+        {
+            case BossState.BullCharge_Windup: TrySetAnimTrigger("ChargeWindup"); break;
+            case BossState.BullCharge_Rush:   TrySetAnimTrigger("ChargeRush");   break;
+            case BossState.GroundSlam_Windup: TrySetAnimTrigger("SlamWindup");   break;
+            case BossState.MagmaBurst:        TrySetAnimTrigger("MagmaBurst");   break;
+            case BossState.EnragedTransition: TrySetAnimTrigger("Enrage");       break;
+            case BossState.Defeated:          TrySetAnimTrigger("Death");        break;
+        }
+    }
+
+    private void TrySetAnimTrigger(string paramName)
+    {
+        if (animator != null && _animParams != null && _animParams.Contains(paramName))
+            animator.SetTrigger(paramName);
+    }
+
+    private void TrySetAnimBool(string paramName, bool value)
+    {
+        if (animator != null && _animParams != null && _animParams.Contains(paramName))
+            animator.SetBool(paramName, value);
+    }
+
+    private void StopActiveAttackCoroutine()
+    {
+        if (_activeAttackCoroutine != null)
+        {
+            StopCoroutine(_activeAttackCoroutine);
+            _activeAttackCoroutine = null;
         }
     }
 
@@ -105,13 +175,18 @@ public class WrathBossAI : MonoBehaviour
         if (playerTarget == null)
         {
             GameObject p = GameObject.FindWithTag("Player");
-            if (p != null) playerTarget = p.transform;
+            if (p != null)
+            {
+                playerTarget = p.transform;
+            }
             else
             {
-                // Fallback: search for CharacterController
-                CharacterController cc = FindAnyObjectByType<CharacterController>();
-                if (cc != null && cc.gameObject != gameObject)
-                    playerTarget = cc.transform;
+                // Fallback: search for PlayerMovement (works even if Player isn't tagged "Player")
+                PlayerMovement pm = FindAnyObjectByType<PlayerMovement>();
+                if (pm != null)
+                {
+                    playerTarget = pm.transform;
+                }
             }
         }
 
@@ -169,10 +244,15 @@ public class WrathBossAI : MonoBehaviour
 
         float dist = Vector3.Distance(transform.position, playerTarget.position);
 
-        // Move toward player until in combat range
+        // Move toward player horizontally until in combat range
         if (dist > idealCombatDistance * 0.75f)
         {
-            MoveInDirection((playerTarget.position - transform.position).normalized, stalkSpeed);
+            Vector3 toPlayer = playerTarget.position - transform.position;
+            toPlayer.y = 0f;
+            if (toPlayer.sqrMagnitude > 0.001f)
+            {
+                MoveInDirection(toPlayer.normalized, stalkSpeed);
+            }
         }
 
         _attackCooldown -= Time.deltaTime;
@@ -193,7 +273,7 @@ public class WrathBossAI : MonoBehaviour
         {
             // At long range: Bull Charge or Magma Spit
             if (Random.value < 0.65f) StartBullCharge();
-            else StartCoroutine(ExecuteMagmaBurst());
+            else _activeAttackCoroutine = StartCoroutine(ExecuteMagmaBurst());
         }
         else
         {
@@ -208,14 +288,14 @@ public class WrathBossAI : MonoBehaviour
     // -----------------------------------------------------------------
     private void StartBullCharge()
     {
-        _state = BossState.BullCharge_Windup;
+        SetState(BossState.BullCharge_Windup);
         float windupDuration = _health.IsEnraged ? chargeWindup * 0.7f : chargeWindup;
         _stateTimer = windupDuration;
 
         // Lock charge direction towards the player
         Vector3 toPlayer = (playerTarget.position - transform.position);
         toPlayer.y = 0f;
-        _chargeDirection = toPlayer.normalized;
+        _chargeDirection = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : transform.forward;
 
         // Show danger lane on the floor
         _telegraph.ShowChargeLane(transform.position, _chargeDirection, chargeDistance, chargeLaneWidth);
@@ -229,9 +309,12 @@ public class WrathBossAI : MonoBehaviour
         if (_stateTimer <= 0f)
         {
             _telegraph.HideChargeLane();
-            _state = BossState.BullCharge_Rush;
+            SetState(BossState.BullCharge_Rush);
             _chargeStartPos = transform.position;
             _hasDealtChargeHit = false;
+            float speed = _health.IsEnraged ? chargeSpeed * 1.25f : chargeSpeed;
+            _chargeMaxTime = (chargeDistance / Mathf.Max(1f, speed)) + 0.5f;
+            _chargeElapsed = 0f;
         }
     }
 
@@ -239,6 +322,7 @@ public class WrathBossAI : MonoBehaviour
     {
         float speed = _health.IsEnraged ? chargeSpeed * 1.25f : chargeSpeed;
         MoveInDirection(_chargeDirection, speed);
+        _chargeElapsed += Time.deltaTime;
 
         // Check if hit player during charge
         if (!_hasDealtChargeHit && playerTarget != null)
@@ -255,11 +339,11 @@ public class WrathBossAI : MonoBehaviour
             }
         }
 
-        // Check if charge distance exceeded
+        // End rush if distance reached OR time expired (prevents getting stuck forever against a wall)
         float traveled = Vector3.Distance(_chargeStartPos, transform.position);
-        if (traveled >= chargeDistance)
+        if (traveled >= chargeDistance || _chargeElapsed >= _chargeMaxTime)
         {
-            _state = BossState.BullCharge_Recovery;
+            SetState(BossState.BullCharge_Recovery);
             _stateTimer = _health.IsEnraged ? 0.5f : 0.9f;
         }
     }
@@ -269,7 +353,7 @@ public class WrathBossAI : MonoBehaviour
         _stateTimer -= Time.deltaTime;
         if (_stateTimer <= 0f)
         {
-            _state = BossState.Stalking;
+            SetState(BossState.Stalking);
         }
     }
 
@@ -278,7 +362,7 @@ public class WrathBossAI : MonoBehaviour
     // -----------------------------------------------------------------
     private void StartGroundSlam()
     {
-        _state = BossState.GroundSlam_Windup;
+        SetState(BossState.GroundSlam_Windup);
         float windupDuration = _health.IsEnraged ? slamWindup * 0.75f : slamWindup;
         _stateTimer = windupDuration;
 
@@ -299,12 +383,13 @@ public class WrathBossAI : MonoBehaviour
     {
         _telegraph.HideSlamCircle();
 
-        // Check damage in radius
+        // Check damage in radius (each PlayerHealth damaged at most once per slam)
         Collider[] hits = Physics.OverlapSphere(transform.position, slamRadius);
+        HashSet<PlayerHealth> damagedPlayers = new HashSet<PlayerHealth>();
         foreach (Collider col in hits)
         {
             PlayerHealth ph = col.GetComponentInParent<PlayerHealth>();
-            if (ph != null)
+            if (ph != null && damagedPlayers.Add(ph))
             {
                 ph.TakeDamage(slamDamage);
             }
@@ -313,7 +398,7 @@ public class WrathBossAI : MonoBehaviour
         // Spawn visual ground dust ring
         SpawnShockwaveVFX();
 
-        _state = BossState.GroundSlam_Recovery;
+        SetState(BossState.GroundSlam_Recovery);
         _stateTimer = _health.IsEnraged ? 0.6f : 1.1f;
     }
 
@@ -344,7 +429,7 @@ public class WrathBossAI : MonoBehaviour
         _stateTimer -= Time.deltaTime;
         if (_stateTimer <= 0f)
         {
-            _state = BossState.Stalking;
+            SetState(BossState.Stalking);
         }
     }
 
@@ -353,15 +438,22 @@ public class WrathBossAI : MonoBehaviour
     // -----------------------------------------------------------------
     private IEnumerator ExecuteMagmaBurst()
     {
-        _state = BossState.MagmaBurst;
-
-        Vector3 spawnPoint = (mouthPosition != null) ? mouthPosition.position : (transform.position + Vector3.up * 2.5f + transform.forward * 2f);
+        SetState(BossState.MagmaBurst);
 
         for (int i = 0; i < magmaShots; i++)
         {
-            if (playerTarget == null) break;
+            if (_state != BossState.MagmaBurst || playerTarget == null)
+            {
+                _activeAttackCoroutine = null;
+                yield break;
+            }
 
             LookAtTarget(playerTarget.position, rotationSpeed * 2f);
+
+            // Recalculate spawnPoint each shot so it follows the boss's current rotation/mouth
+            Vector3 spawnPoint = (mouthPosition != null)
+                ? mouthPosition.position
+                : (transform.position + Vector3.up * 2.5f + transform.forward * 2f);
 
             GameObject proj;
             if (magmaProjectilePrefab != null)
@@ -390,7 +482,12 @@ public class WrathBossAI : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.6f);
-        _state = BossState.Stalking;
+        _activeAttackCoroutine = null;
+
+        if (_state == BossState.MagmaBurst)
+        {
+            SetState(BossState.Stalking);
+        }
     }
 
     // -----------------------------------------------------------------
@@ -400,8 +497,9 @@ public class WrathBossAI : MonoBehaviour
     {
         if (_state == BossState.Defeated) return;
 
+        StopActiveAttackCoroutine();
         _telegraph.HideAll();
-        _state = BossState.Staggered;
+        SetState(BossState.Staggered);
         _stateTimer = staggerDuration;
 
         if (_visuals != null)
@@ -415,10 +513,7 @@ public class WrathBossAI : MonoBehaviour
         _stateTimer -= Time.deltaTime;
         float elapsed = staggerDuration - _stateTimer;
 
-        // Procedural knockdown curve:
-        // 0.0s - 0.5s: Collapse down to floor (0 -> 1)
-        // 0.5s - (staggerDuration - 0.8s): Down on floor vulnerable
-        // (staggerDuration - 0.8s) - staggerDuration: Stand back up (1 -> 0)
+        // Procedural knockdown curve (only used if WrathBossVisuals is attached)
         float collapseDuration = 0.5f;
         float getUpDuration = 0.8f;
         float getUpStart = Mathf.Max(collapseDuration, staggerDuration - getUpDuration);
@@ -446,7 +541,7 @@ public class WrathBossAI : MonoBehaviour
                 _visuals.SetKnockdownPose(0f);
                 _visuals.HideDizzyStars();
             }
-            _state = BossState.Stalking;
+            SetState(BossState.Stalking);
         }
     }
 
@@ -454,13 +549,12 @@ public class WrathBossAI : MonoBehaviour
     {
         if (_state == BossState.Defeated) return;
 
+        StopActiveAttackCoroutine();
         _telegraph.HideAll();
-        _state = BossState.EnragedTransition;
+        SetState(BossState.EnragedTransition);
         _stateTimer = 1.8f;
 
-        // Trigger red magma emission on materials
-        WrathBossVisuals visuals = GetComponent<WrathBossVisuals>();
-        if (visuals != null) visuals.SetEnragedAppearance(true);
+        if (_visuals != null) _visuals.SetEnragedAppearance(true);
     }
 
     private void TickEnragedTransition()
@@ -468,18 +562,19 @@ public class WrathBossAI : MonoBehaviour
         _stateTimer -= Time.deltaTime;
         if (_stateTimer <= 0f)
         {
-            _state = BossState.Stalking;
+            SetState(BossState.Stalking);
         }
     }
 
     private void HandleDefeated()
     {
-        _state = BossState.Defeated;
+        StopActiveAttackCoroutine();
+        SetState(BossState.Defeated);
         _telegraph.HideAll();
 
         if (_navAgent != null) _navAgent.isStopped = true;
 
-        // Disable weakpoint colliders so no further hits register
+        // Disable colliders so no further hits register
         Collider[] colliders = GetComponentsInChildren<Collider>();
         foreach (Collider col in colliders) col.enabled = false;
 

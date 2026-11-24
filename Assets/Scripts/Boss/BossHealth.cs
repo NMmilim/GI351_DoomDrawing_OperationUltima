@@ -56,32 +56,30 @@ public class BossHealth : MonoBehaviour, IDamageable
         _currentHp = Mathf.Max(0, _currentHp - damage);
         OnHealthChanged?.Invoke(_currentHp, maxHp);
 
-        // Check Stagger Accumulation (Attacks on legs and head contribute heavily)
-        if (!_isDead)
-        {
-            int staggerValue = (part == BossWeakpoint.BodyPart.Head || part == BossWeakpoint.BodyPart.Legs)
-                ? Mathf.RoundToInt(damage * 1.5f)
-                : damage;
-
-            _staggerAccumulator += staggerValue;
-            if (_staggerAccumulator >= damageToStagger)
-            {
-                _staggerAccumulator = 0;
-                OnStaggered?.Invoke();
-            }
-
-            // Check Enrage Threshold
-            if (!_isEnraged && HealthRatio <= enrageThreshold)
-            {
-                _isEnraged = true;
-                OnEnraged?.Invoke();
-            }
-        }
-
-        // Check Death
-        if (_currentHp <= 0 && !_isDead)
+        // Check Death first so killing blows don't trigger stagger or enrage
+        if (_currentHp <= 0)
         {
             Die();
+            return;
+        }
+
+        // Check Stagger Accumulation (Attacks on legs and head contribute heavily)
+        int staggerValue = (part == BossWeakpoint.BodyPart.Head || part == BossWeakpoint.BodyPart.Legs)
+            ? Mathf.RoundToInt(damage * 1.5f)
+            : damage;
+
+        _staggerAccumulator += staggerValue;
+        if (_staggerAccumulator >= damageToStagger)
+        {
+            _staggerAccumulator = 0;
+            OnStaggered?.Invoke();
+        }
+
+        // Check Enrage Threshold
+        if (!_isEnraged && HealthRatio <= enrageThreshold)
+        {
+            _isEnraged = true;
+            OnEnraged?.Invoke();
         }
     }
 

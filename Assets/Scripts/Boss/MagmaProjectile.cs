@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -13,6 +14,18 @@ public class MagmaProjectile : MonoBehaviour
 
     private Vector3 _velocity;
     private bool    _exploded;
+
+    private void Awake()
+    {
+        // Unity requires a Rigidbody on at least one object for trigger/collision events to fire against static terrain/walls.
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb == null) rb = gameObject.AddComponent<Rigidbody>();
+        rb.useGravity = false;
+        rb.isKinematic = true;
+
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.isTrigger = true;
+    }
 
     public void Init(Vector3 targetPos)
     {
@@ -31,8 +44,9 @@ public class MagmaProjectile : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (_exploded) return;
-        // Ignore boss self-collisions
+        // Ignore boss self-collisions and other projectiles
         if (other.GetComponentInParent<BossHealth>() != null) return;
+        if (other.GetComponentInParent<MagmaProjectile>() != null) return;
 
         Explode();
     }
@@ -41,6 +55,7 @@ public class MagmaProjectile : MonoBehaviour
     {
         if (_exploded) return;
         if (collision.collider.GetComponentInParent<BossHealth>() != null) return;
+        if (collision.collider.GetComponentInParent<MagmaProjectile>() != null) return;
 
         Explode();
     }
@@ -49,12 +64,13 @@ public class MagmaProjectile : MonoBehaviour
     {
         _exploded = true;
 
-        // Damage Player if in blast radius
+        // Damage each PlayerHealth at most once (even if the player has multiple child colliders)
         Collider[] hits = Physics.OverlapSphere(transform.position, blastRadius);
+        HashSet<PlayerHealth> damagedPlayers = new HashSet<PlayerHealth>();
         foreach (Collider col in hits)
         {
             PlayerHealth player = col.GetComponentInParent<PlayerHealth>();
-            if (player != null)
+            if (player != null && damagedPlayers.Add(player))
             {
                 player.TakeDamage(damage);
             }

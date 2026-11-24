@@ -19,6 +19,9 @@ public class BossWeakpoint : MonoBehaviour, IBossHittable
     [Header("Part Configuration")]
     public BodyPart bodyPart = BodyPart.ArmoredBody;
 
+    [Tooltip("When enabled, automatically sets default multiplier & spark color based on Body Part.")]
+    public bool usePartDefaults = true;
+
     [Tooltip("Damage multiplier applied when shooting this specific body part.")]
     public float damageMultiplier = 1.0f;
 
@@ -29,33 +32,48 @@ public class BossWeakpoint : MonoBehaviour, IBossHittable
     [Tooltip("Color of hit sparks for this part.")]
     public Color sparkColor = Color.white;
 
+    private void OnValidate()
+    {
+        if (usePartDefaults)
+        {
+            ApplyPartDefaults();
+        }
+    }
+
     private void Awake()
     {
         if (bossHealth == null)
             bossHealth = GetComponentInParent<BossHealth>();
 
-        // Set default multipliers if not manually configured
-        if (damageMultiplier == 1.0f)
+        if (usePartDefaults)
         {
-            switch (bodyPart)
-            {
-                case BodyPart.Head:
-                    damageMultiplier = 2.0f;
-                    sparkColor = new Color(1f, 0.9f, 0.2f); // Golden critical
-                    break;
-                case BodyPart.ChestCore:
-                    damageMultiplier = 1.5f;
-                    sparkColor = new Color(1f, 0.4f, 0.1f); // Orange core
-                    break;
-                case BodyPart.Tail:
-                    damageMultiplier = 0.8f;
-                    sparkColor = new Color(0.7f, 0.7f, 0.7f); // Armored gray
-                    break;
-                default:
-                    damageMultiplier = 1.0f;
-                    sparkColor = Color.white;
-                    break;
-            }
+            ApplyPartDefaults();
+        }
+    }
+
+    /// <summary>
+    /// Applies the standard multiplier and spark color for the selected BodyPart.
+    /// </summary>
+    public void ApplyPartDefaults()
+    {
+        switch (bodyPart)
+        {
+            case BodyPart.Head:
+                damageMultiplier = 2.0f;
+                sparkColor = new Color(1f, 0.9f, 0.2f); // Golden critical
+                break;
+            case BodyPart.ChestCore:
+                damageMultiplier = 1.5f;
+                sparkColor = new Color(1f, 0.4f, 0.1f); // Orange core
+                break;
+            case BodyPart.Tail:
+                damageMultiplier = 0.8f;
+                sparkColor = new Color(0.7f, 0.7f, 0.7f); // Armored gray
+                break;
+            default:
+                damageMultiplier = 1.0f;
+                sparkColor = Color.white;
+                break;
         }
     }
 
