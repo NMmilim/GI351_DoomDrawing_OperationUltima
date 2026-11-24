@@ -16,7 +16,7 @@ public class MainMenu : MonoBehaviour
     }
     public void Play()
     {
-        LevelManager.Instance.LoadScene("IloveWork", "CrossFade");
+        LevelManager.Instance.LoadScene("Terrain03", "CrossFade");
         MusicManager.Instance.PlayMusic("SpaceBGM"); //test
     }
     public void Menu()
@@ -29,7 +29,7 @@ public class MainMenu : MonoBehaviour
     public void Tutorial()
     {
 
-        LevelManager.Instance.LoadScene("TestPlace", "CrossFade");
+      //  LevelManager.Instance.LoadScene("TestPlace", "CrossFade");
 
     }
 

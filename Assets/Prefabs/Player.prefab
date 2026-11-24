@@ -107,9 +107,9 @@ MonoBehaviour:
   sprintInterval: 0.3
   crouchInterval: 0.65
   walkPitch: 1
-  sprintPitch: 1.15
+  sprintPitch: 1.25
   crouchPitch: 0.9
-  pitchVariation: 0.03
+  pitchVariation: 0.05
 --- !u!1 &6515650697854952350
 GameObject:
   m_ObjectHideFlags: 0

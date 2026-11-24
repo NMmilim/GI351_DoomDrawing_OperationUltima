@@ -268,7 +268,18 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 1bf9fbc7760558a4fa1571ed14bbf889, type: 3}
   - groupID: Footsteps
     clips:
-    - {fileID: 8300000, guid: d04bec5d4b1ac4441acd78d36f9fe4a5, type: 3}
+    - {fileID: 8300000, guid: 146e97e964256ad4880dfffbfd79c239, type: 3}
+    - {fileID: 8300000, guid: 46b668c64fe4e4e4299f3d51eaa0cbf5, type: 3}
+    - {fileID: 8300000, guid: 1b3b63e2a1c5c6f419888f3a024066b7, type: 3}
+    - {fileID: 8300000, guid: e3e4bd7659bd25b4393469a04e90d469, type: 3}
+    - {fileID: 8300000, guid: 11ab5fd4aa088de47b03acb946b3626f, type: 3}
+    - {fileID: 8300000, guid: 19e4c370842926e4ca5dbf040ca01713, type: 3}
+    - {fileID: 8300000, guid: 20efb037899d05044a0b57b09894bff1, type: 3}
+    - {fileID: 8300000, guid: b41144c9d8411484e94e8b111a746234, type: 3}
+    - {fileID: 8300000, guid: 91b3704cacb76624694dee006e550a6d, type: 3}
+    - {fileID: 8300000, guid: 9e2e23e9d3267c649872b7ca25fef54d, type: 3}
+    - {fileID: 8300000, guid: 5d2aa055ee3c335468d04175b83bac45, type: 3}
+    - {fileID: 8300000, guid: 77969bf5e93c7d84d86d06715f0a879a, type: 3}
 --- !u!114 &3954555000660303314
 MonoBehaviour:
   m_ObjectHideFlags: 0
