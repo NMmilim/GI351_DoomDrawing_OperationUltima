@@ -24,10 +24,10 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 velocity;
     private Vector3 dashVelocity;
     private bool isGrounded;
-    bool isMoving;
-    bool isSprinting;
-    bool isCrouching;
-    bool isSliding;
+    public bool isMoving;
+    public bool isSprinting;
+    public bool isCrouching;
+    public bool isSliding;
     
 
     void Start()

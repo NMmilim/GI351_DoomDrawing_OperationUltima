@@ -251,15 +251,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1649902191804332789}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.39, y: -0.1, z: -0.818}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.39, y: -0.09999995, z: -0.818}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5073680705741811763}
   - {fileID: 7357682624659562582}
   - {fileID: 3039567294638189072}
-  m_Father: {fileID: 3310613984484945272}
+  m_Father: {fileID: 4274697779537148198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2888487075428795733
 MonoBehaviour:
@@ -290,6 +290,68 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AwesomeAnimationScript
   anim1: {fileID: 5162897929697217343}
   anim2: {fileID: 9183978005757848663}
+  mainCamera: {fileID: 6268159015502288079}
+  firePoint: {fileID: 1762730057545343019}
+  muzzleFlashPrefab: {fileID: 0}
+  maxRange: 100
+  fireRate: 0.12
+--- !u!1 &1744841754155323182
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4274697779537148198}
+  - component: {fileID: 7618882847490079548}
+  m_Layer: 0
+  m_Name: ViewBob
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4274697779537148198
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744841754155323182}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 4.10332, y: 1.0520002, z: 0.51342}
+  m_LocalScale: {x: 0.10020071, y: 0.6799201, z: 1.4007852}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5267077925534024524}
+  m_Father: {fileID: 1059303346440705586}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7618882847490079548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744841754155323182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bbbd97a09328cc459ed02481fdb9247, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ViewmodelBob
+  playerMovement: {fileID: 7462517000825853182, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
+  baseBobFrequency: 8
+  horizontalAmount: 0.02
+  verticalAmount: 0.017
+  crouchBobMultiplier: 0.6
+  sprintBobMultiplier: 1.5
+  adsBobMultiplier: 0.2
+  smoothSpeed: 10
+  jumpOffset: 0.1
+  landingKick: 0.2
+  jumpSmoothSpeed: 10
+  landingRecoverySpeed: 8
 --- !u!1 &3146674926627261034
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,8 +415,8 @@ Transform:
   m_Children:
   - {fileID: 4658583843289631029}
   - {fileID: 2236649272045255449}
-  - {fileID: 5267077925534024524}
   - {fileID: 6268159015502288079}
+  - {fileID: 1059303346440705586}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2466727949318683265
@@ -629,6 +691,63 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &6758358931311837924
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1059303346440705586}
+  - component: {fileID: 7241947923791421312}
+  m_Layer: 0
+  m_Name: WallCheckViewModel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1059303346440705586
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6758358931311837924}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -40.951008, y: -1.5472409, z: -0.366523}
+  m_LocalScale: {x: 9.979969, y: 1.4707611, z: 0.7138853}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4274697779537148198}
+  m_Father: {fileID: 3310613984484945272}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7241947923791421312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6758358931311837924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 491b508b979e6a94395f87796a5eb62d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallCheckViewModel
+  firePoint: {fileID: 1762730057545343019}
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  checkDistance: 2
+  sphereRadius: 0.08
+  ignoredTags:
+  - Player
+  - Bullet
+  maxPushback: 0.35
+  maxTiltUpAngle: 35
+  smoothSpeed: 12
 --- !u!1 &7191514583719195958
 GameObject:
   m_ObjectHideFlags: 0

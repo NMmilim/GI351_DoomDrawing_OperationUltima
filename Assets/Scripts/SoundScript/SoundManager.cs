@@ -59,21 +59,17 @@ public class SoundManager : MonoBehaviour
         PlaySound3D(sfxLibrary.GetClipFromName(soundName), pos);
     }
 
-    public void PlaySound2D(string soundName)
+    public void PlaySound2D(string soundName, float pitch = 1f)
     {
         if (sfxLibrary == null)
         {
-            Debug.LogWarning(
-                "SoundManager: SoundLibrary is missing.",
-                this);
+            Debug.LogWarning("SoundManager: SoundLibrary is missing.", this);
             return;
         }
 
         if (sfx2DSource == null)
         {
-            Debug.LogWarning(
-                "SoundManager: AudioSource is missing.",
-                this);
+            Debug.LogWarning("SoundManager: AudioSource is missing.", this);
             return;
         }
 
@@ -81,40 +77,19 @@ public class SoundManager : MonoBehaviour
 
         if (clip == null)
         {
-            Debug.LogWarning(
-                $"SoundManager: No audio clip found for '{soundName}'.",
-                this);
+            Debug.LogWarning($"SoundManager: No audio clip found for '{soundName}'.", this);
             return;
         }
 
-        // Diagnose a disabled AudioSource instead of attempting playback.
-        if (!sfx2DSource.enabled)
-        {
-            Debug.LogWarning(
-                "SoundManager: AudioSource is disabled. " +
-                "Check whether another script disables it.",
-                sfx2DSource);
+        if (!sfx2DSource.enabled || !sfx2DSource.gameObject.activeInHierarchy)
             return;
-        }
 
-        if (!sfx2DSource.gameObject.activeInHierarchy)
-        {
-            Debug.LogWarning(
-                "SoundManager: AudioSource GameObject or one of its parents " +
-                "is inactive. Check the GameObject hierarchy.",
-                sfx2DSource);
-            Debug.LogWarning(
-    $"Manager active: {gameObject.activeInHierarchy}\n" +
-    $"Source active: {sfx2DSource.gameObject.activeInHierarchy}\n" +
-    $"Source enabled: {sfx2DSource.enabled}\n" +
-    $"Manager parent: {(transform.parent == null ? "none" : transform.parent.name)}",
-    gameObject);
-            return;
-        }
-
+        // Apply the custom pitch right before playing
+        sfx2DSource.pitch = pitch;
         sfx2DSource.PlayOneShot(clip);
     }
-private void DiagnoseAudioHierarchy()
+
+    private void DiagnoseAudioHierarchy()
     {
         Transform current = sfx2DSource.transform;
 

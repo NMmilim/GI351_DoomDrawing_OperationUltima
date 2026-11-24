@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 1491632565940118829}
   - component: {fileID: 3880760780585576803}
   - component: {fileID: 7462517000825853182}
+  - component: {fileID: 5751979914810027829}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -85,6 +86,30 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  isMoving: 0
+  isSprinting: 0
+  isCrouching: 0
+  isSliding: 0
+--- !u!114 &5751979914810027829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5733885420393572759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d9f3a0c0017edb4397751565197cbce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFootsteps
+  footstepSoundName: Footsteps
+  walkInterval: 0.45
+  sprintInterval: 0.3
+  crouchInterval: 0.65
+  walkPitch: 1
+  sprintPitch: 1.15
+  crouchPitch: 0.9
+  pitchVariation: 0.03
 --- !u!1 &6515650697854952350
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,6 +501,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: a3402efdff93cd94c8db4a61f5dcf60a, type: 2}
+    - target: {fileID: 7618882847490079548, guid: 10acd861d07d7ce44be1e1ca071c3551, type: 3}
+      propertyPath: playerMovement
+      value: 
+      objectReference: {fileID: 7462517000825853182}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
