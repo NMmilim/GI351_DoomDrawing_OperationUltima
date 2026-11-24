@@ -75,8 +75,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   DefaultSpeed: 4
   jumpForce: 5
-  stamina: 50000000
-  maxStamina: 50000000
+  stamina: 100
+  maxStamina: 200
   gravity: -70
   dashForce: 15
   dashDamp: 25

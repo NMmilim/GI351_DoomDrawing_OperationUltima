@@ -1019,6 +1019,7 @@ GameObject:
   - component: {fileID: 1556470337649819715}
   - component: {fileID: 6076982734909208023}
   - component: {fileID: 4066553148575931533}
+  - component: {fileID: 3260739086768626047}
   m_Layer: 5
   m_Name: HUDCanvas
   m_TagString: Untagged
@@ -1125,11 +1126,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c19db87c446be94ba7a717a395b43d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHUD
-  hpSlider: {fileID: 0}
-  staminaSlider: {fileID: 0}
-  damageFlashImage: {fileID: 0}
+  hpSlider: {fileID: 5886657395271370279}
+  staminaSlider: {fileID: 182156668989192282}
+  damageFlashImage: {fileID: 1202532482237640322}
   flashDuration: 0.4
   maxFlashAlpha: 0.35
+--- !u!114 &3260739086768626047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3663163448108965389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27359fa6498a85b46b32c61cba34b702, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossUI
+  targetBoss: {fileID: 0}
+  healthSlider: {fileID: 8061268248765954897}
+  delayedSlider: {fileID: 1099329827684372342}
+  nameText: {fileID: 8205610484364104352}
+  winBanner: {fileID: 293616031228570813}
+  loseBanner: {fileID: 2601849978742867209}
+  enragedBarColor: {r: 1, g: 0.15, b: 0, a: 1}
+  chipDelay: 0.4
+  chipSpeed: 0.4
 --- !u!1 &3797364540986947704
 GameObject:
   m_ObjectHideFlags: 0
@@ -1338,7 +1360,7 @@ GameObject:
   - component: {fileID: 7882081222409916158}
   - component: {fileID: 5886657395271370279}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: HP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

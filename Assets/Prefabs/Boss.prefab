@@ -1026,13 +1026,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2
-  m_Radius: 1.06
+  m_Height: 7.41
+  m_Radius: 3.05
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 1.72, y: 2, z: -0.87}
+  m_Center: {x: 1.72, y: -0.19, z: -0.87}
 --- !u!114 &-3415458972545220279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1075,6 +1075,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WrathBossAI
   playerTarget: {fileID: 0}
   stalkSpeed: 4.5
+  roamSpeed: 2.8
+  roamRadius: 14
   rotationSpeed: 120
   idealCombatDistance: 8
   animator: {fileID: 0}

@@ -1893,6 +1893,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3260739086768626047, guid: 4f52c803a2d1f7e4f99251e2c3917018, type: 3}
+      propertyPath: targetBoss
+      value: 
+      objectReference: {fileID: 281401104}
     - target: {fileID: 3663163448108965389, guid: 4f52c803a2d1f7e4f99251e2c3917018, type: 3}
       propertyPath: m_Name
       value: HUDCanvas
@@ -2012,10 +2016,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3663163448108965389, guid: 4f52c803a2d1f7e4f99251e2c3917018, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1703155225}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f52c803a2d1f7e4f99251e2c3917018, type: 3}
 --- !u!1 &415533258
 GameObject:
@@ -3447,11 +3448,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &623025622 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 293616031228570813, guid: 4f52c803a2d1f7e4f99251e2c3917018, type: 3}
-  m_PrefabInstance: {fileID: 413815328}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &680728570
 GameObject:
   m_ObjectHideFlags: 0
@@ -4793,17 +4789,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b87dc5789577b344698a8cef7a3d70cf, type: 3}
---- !u!114 &1014053569 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1099329827684372342, guid: 4f52c803a2d1f7e4f99251e2c3917018, type: 3}
-  m_PrefabInstance: {fileID: 413815328}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1 &1019808103
 GameObject:
   m_ObjectHideFlags: 0
@@ -5718,17 +5703,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 101466364}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1131367265 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8205610484364104352, guid: 4f52c803a2d1f7e4f99251e2c3917018, type: 3}
-  m_PrefabInstance: {fileID: 413815328}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &1205733454
 GameObject:
   m_ObjectHideFlags: 0
@@ -6204,17 +6178,6 @@ Transform:
 --- !u!114 &1263704110 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 182156668989192282, guid: 4f52c803a2d1f7e4f99251e2c3917018, type: 3}
-  m_PrefabInstance: {fileID: 413815328}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
---- !u!114 &1267858102 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8061268248765954897, guid: 4f52c803a2d1f7e4f99251e2c3917018, type: 3}
   m_PrefabInstance: {fileID: 413815328}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
@@ -7472,11 +7435,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1237441918}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1663089832 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2601849978742867209, guid: 4f52c803a2d1f7e4f99251e2c3917018, type: 3}
-  m_PrefabInstance: {fileID: 413815328}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1666175002
 GameObject:
   m_ObjectHideFlags: 0
@@ -7590,32 +7548,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1666175002}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1703155219 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3663163448108965389, guid: 4f52c803a2d1f7e4f99251e2c3917018, type: 3}
-  m_PrefabInstance: {fileID: 413815328}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1703155225
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1703155219}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27359fa6498a85b46b32c61cba34b702, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BossUI
-  targetBoss: {fileID: 281401104}
-  healthSlider: {fileID: 1267858102}
-  delayedSlider: {fileID: 1014053569}
-  nameText: {fileID: 1131367265}
-  winBanner: {fileID: 623025622}
-  loseBanner: {fileID: 1663089832}
-  enragedBarColor: {r: 1, g: 0.15, b: 0, a: 1}
-  chipDelay: 0.4
-  chipSpeed: 0.4
 --- !u!1 &1796603511
 GameObject:
   m_ObjectHideFlags: 0
@@ -9482,24 +9414,8 @@ PrefabInstance:
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7462517000825853182, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
-      propertyPath: dashDamp
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 7462517000825853182, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
-      propertyPath: dashForce
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 7462517000825853182, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
       propertyPath: maxStamina
       value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 7462517000825853182, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
-      propertyPath: DefaultSpeed
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7462517000825853182, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
-      propertyPath: slideDuration
-      value: 0.7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
