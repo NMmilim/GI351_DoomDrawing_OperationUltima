@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3880760780585576803}
   - component: {fileID: 7462517000825853182}
   - component: {fileID: 5751979914810027829}
+  - component: {fileID: 5535318364983794999}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -110,6 +111,19 @@ MonoBehaviour:
   sprintPitch: 1.25
   crouchPitch: 0.9
   pitchVariation: 0.05
+--- !u!114 &5535318364983794999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5733885420393572759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bd9f71768a34833b7bf3f06a761d147, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  maxHp: 100
 --- !u!1 &6515650697854952350
 GameObject:
   m_ObjectHideFlags: 0

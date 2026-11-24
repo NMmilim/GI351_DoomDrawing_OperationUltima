@@ -23,8 +23,12 @@ public class MagmaProjectile : MonoBehaviour
         rb.useGravity = false;
         rb.isKinematic = true;
 
-        Collider col = GetComponent<Collider>();
-        if (col != null) col.isTrigger = true;
+        // Set all colliders (including child meshes like magma.prefab's Sphere) to trigger so kinematic Rigidbody detects terrain & Player
+        Collider[] cols = GetComponentsInChildren<Collider>();
+        foreach (Collider col in cols)
+        {
+            col.isTrigger = true;
+        }
     }
 
     public void Init(Vector3 targetPos)

@@ -387,8 +387,8 @@ public class WrathBossAI : MonoBehaviour
         toPlayer.y = 0f;
         _chargeDirection = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : transform.forward;
 
-        // Show danger lane on the floor
-        _telegraph.ShowChargeLane(transform.position, _chargeDirection, chargeDistance, chargeLaneWidth);
+        // Show danger lane on the floor at the boss's feet
+        _telegraph.ShowChargeLane(GetFeetPosition(), _chargeDirection, chargeDistance, chargeLaneWidth);
     }
 
     private void TickChargeWindup()
@@ -414,11 +414,16 @@ public class WrathBossAI : MonoBehaviour
         MoveInDirection(_chargeDirection, speed);
         _chargeElapsed += Time.deltaTime;
 
-        // Check if hit player during charge
+        // Check horizontal (XZ) distance from boss capsule center so tall bosses still hit players on the ground
         if (!_hasDealtChargeHit && playerTarget != null)
         {
-            float distToPlayer = Vector3.Distance(transform.position, playerTarget.position);
-            if (distToPlayer <= (chargeLaneWidth * 0.6f))
+            Vector3 bossCenter = GetCapsuleWorldCenter();
+            Vector2 bossXZ = new Vector2(bossCenter.x, bossCenter.z);
+            Vector2 playerXZ = new Vector2(playerTarget.position.x, playerTarget.position.z);
+            float hitRadius = Mathf.Max(chargeLaneWidth * 0.6f, (_characterController != null ? _characterController.radius : 1.5f) + 1.2f);
+            float verticalGap = Mathf.Abs(GetFeetPosition().y - playerTarget.position.y);
+
+            if (Vector2.Distance(bossXZ, playerXZ) <= hitRadius && verticalGap <= 4.5f)
             {
                 _hasDealtChargeHit = true;
                 PlayerHealth ph = playerTarget.GetComponentInParent<PlayerHealth>();
@@ -456,8 +461,8 @@ public class WrathBossAI : MonoBehaviour
         float windupDuration = _health.IsEnraged ? slamWindup * 0.75f : slamWindup;
         _stateTimer = windupDuration;
 
-        // Show danger circle on the ground
-        _telegraph.ShowSlamCircle(transform.position, slamRadius);
+        // Show danger circle on the ground at the boss's feet
+        _telegraph.ShowSlamCircle(GetFeetPosition(), slamRadius);
     }
 
     private void TickSlamWindup()
@@ -472,9 +477,10 @@ public class WrathBossAI : MonoBehaviour
     private void ExecuteSlamImpact()
     {
         _telegraph.HideSlamCircle();
+        Vector3 feetPos = GetFeetPosition();
 
-        // Check damage in radius (each PlayerHealth damaged at most once per slam)
-        Collider[] hits = Physics.OverlapSphere(transform.position, slamRadius);
+        // Check damage in radius around the boss's feet (each PlayerHealth damaged at most once per slam)
+        Collider[] hits = Physics.OverlapSphere(feetPos, slamRadius);
         HashSet<PlayerHealth> damagedPlayers = new HashSet<PlayerHealth>();
         foreach (Collider col in hits)
         {
@@ -485,20 +491,20 @@ public class WrathBossAI : MonoBehaviour
             }
         }
 
-        // Spawn visual ground dust ring
-        SpawnShockwaveVFX();
+        // Spawn visual ground dust ring at feet
+        SpawnShockwaveVFX(feetPos);
 
         SetState(BossState.GroundSlam_Recovery);
         _stateTimer = _health.IsEnraged ? 0.6f : 1.1f;
     }
 
-    private void SpawnShockwaveVFX()
+    private void SpawnShockwaveVFX(Vector3 feetPos)
     {
         GameObject shock = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        shock.transform.position = transform.position + Vector3.up * 0.1f;
+        shock.transform.position = feetPos + Vector3.up * 0.1f;
         shock.transform.localScale = new Vector3(slamRadius * 2f, 0.05f, slamRadius * 2f);
         Collider sc = shock.GetComponent<Collider>();
-        if (sc != null) DestroyImmediate(sc);
+        if (sc != null) sc.enabled = false;
 
         Renderer r = shock.GetComponent<Renderer>();
         if (r != null)
@@ -675,8 +681,30 @@ public class WrathBossAI : MonoBehaviour
     }
 
     // -----------------------------------------------------------------
-    //  Movement & Rotation Helpers
+    //  Movement, Ground-Foot & Rotation Helpers
     // -----------------------------------------------------------------
+    public Vector3 GetCapsuleWorldCenter()
+    {
+        if (_characterController != null)
+            return transform.TransformPoint(_characterController.center);
+        return transform.position;
+    }
+
+    /// <summary>
+    /// Returns the world position at the bottom of the Boss's CharacterController capsule (the feet),
+    /// even if the Prefab's root pivot is centered in the torso.
+    /// </summary>
+    public Vector3 GetFeetPosition()
+    {
+        if (_characterController != null)
+        {
+            Vector3 worldCenter = transform.TransformPoint(_characterController.center);
+            float halfHeight = (_characterController.height * 0.5f) * Mathf.Abs(transform.lossyScale.y);
+            return new Vector3(worldCenter.x, worldCenter.y - halfHeight, worldCenter.z);
+        }
+        return transform.position;
+    }
+
     private void LookAtTarget(Vector3 targetPos, float speed)
     {
         Vector3 dir = (targetPos - transform.position);

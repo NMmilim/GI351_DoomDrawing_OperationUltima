@@ -59,6 +59,7 @@ public class StratagemSystem : MonoBehaviour
     private static Material _explosionMat;
     private static Material _blueLaserMat;
     private static Material _smokeMat;
+    private static Texture2D _softCircleTex;
 
     private void Start()
     {
@@ -178,7 +179,8 @@ public class StratagemSystem : MonoBehaviour
     private IEnumerator ExecuteAirStrikeRoutine()
     {
         BossHealth boss = FindAnyObjectByType<BossHealth>();
-        Vector3 fallbackPos = transform.position + transform.forward * 15f;
+        WrathBossAI bossAI = boss != null ? boss.GetComponent<WrathBossAI>() : null;
+        Vector3 fallbackPos = SnapToGround(transform.position + transform.forward * 15f);
 
         // Spawn red orbital laser beam + ground ring
         GameObject beacon = CreateOrbitalBeacon("AirStrikeBeacon", GetRedLaserMaterial(), airStrikeExplosionRadius);
@@ -187,21 +189,25 @@ public class StratagemSystem : MonoBehaviour
         while (elapsed < airStrikeDelay)
         {
             elapsed += Time.deltaTime;
-            Vector3 targetPos = (boss != null && !boss.IsDead) ? boss.transform.position : fallbackPos;
+            Vector3 targetPos = (boss != null && !boss.IsDead)
+                ? SnapToGround(bossAI != null ? bossAI.GetFeetPosition() : boss.transform.position)
+                : fallbackPos;
             beacon.transform.position = targetPos;
             yield return null;
         }
 
-        Vector3 strikePos = (boss != null && !boss.IsDead) ? boss.transform.position : fallbackPos;
+        Vector3 strikePos = (boss != null && !boss.IsDead)
+            ? SnapToGround(bossAI != null ? bossAI.GetFeetPosition() : boss.transform.position)
+            : fallbackPos;
         Destroy(beacon);
 
         // Big glowing explosion sphere on the monster
-        SpawnExplosionSphere(strikePos + Vector3.up * 1.5f, airStrikeExplosionRadius);
+        SpawnExplosionSphere(strikePos + Vector3.up * 2.0f, airStrikeExplosionRadius);
 
         // Force damage onto the Boss
         if (boss != null && !boss.IsDead)
         {
-            boss.RegisterDamage(airStrikeDamage, BossWeakpoint.BodyPart.ArmoredBody, strikePos + Vector3.up * 1.5f);
+            boss.RegisterDamage(airStrikeDamage, BossWeakpoint.BodyPart.ArmoredBody, strikePos + Vector3.up * 2.0f);
         }
         else
         {
@@ -242,7 +248,7 @@ public class StratagemSystem : MonoBehaviour
     private void TriggerSmokeOrbital()
     {
         _smokeCdTimer = smokeCooldown;
-        StartCoroutine(ExecuteSmokeOrbitalRoutine(transform.position));
+        StartCoroutine(ExecuteSmokeOrbitalRoutine(SnapToGround(transform.position)));
     }
 
     private IEnumerator ExecuteSmokeOrbitalRoutine(Vector3 dropPos)
@@ -253,7 +259,7 @@ public class StratagemSystem : MonoBehaviour
         yield return new WaitForSeconds(smokeCallDelay);
         Destroy(beacon);
 
-        // Build visual smoke carpet (cluster of soft translucent smoke puffs + rising particles)
+        // Build swirling ParticleSystem smoke carpet (no flat gray solid spheres clipping the gun!)
         GameObject smokeRoot = BuildSmokeCarpetVisual(dropPos, smokeRadius);
 
         SmokeZoneRuntime zone = new SmokeZoneRuntime
@@ -326,44 +332,71 @@ public class StratagemSystem : MonoBehaviour
     private GameObject BuildSmokeCarpetVisual(Vector3 center, float radius)
     {
         GameObject root = new GameObject("SmokeOrbitalCarpet");
-        root.transform.position = center;
+        root.transform.position = center + Vector3.up * 0.4f;
 
-        Material smokeMat = GetSmokeMaterial();
+        ParticleSystem ps = root.AddComponent<ParticleSystem>();
+        var main = ps.main;
+        main.duration = smokeDuration;
+        main.loop = true;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(2.2f, 3.6f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(0.4f, 1.2f);
+        main.startSize = new ParticleSystem.MinMaxCurve(radius * 0.35f, radius * 0.6f);
+        main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
+        main.startColor = new ParticleSystem.MinMaxGradient(
+            new Color(0.65f, 0.70f, 0.75f, 0.28f),
+            new Color(0.82f, 0.86f, 0.90f, 0.38f));
+        main.maxParticles = 120;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
 
-        // Central puff + ring of overlapping smoke puffs
-        int puffCount = 10;
-        for (int i = 0; i < puffCount; i++)
+        var emission = ps.emission;
+        emission.rateOverTime = 28f;
+        emission.SetBursts(new ParticleSystem.Burst[] { new ParticleSystem.Burst(0f, 35) });
+
+        var shape = ps.shape;
+        shape.shapeType = ParticleSystemShapeType.Circle;
+        shape.radius = radius * 0.85f;
+        shape.rotation = new Vector3(-90f, 0f, 0f);
+
+        var colLife = ps.colorOverLifetime;
+        colLife.enabled = true;
+        Gradient grad = new Gradient();
+        grad.SetKeys(
+            new GradientColorKey[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(new Color(0.75f, 0.78f, 0.82f), 1f) },
+            new GradientAlphaKey[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(0.45f, 0.2f), new GradientAlphaKey(0.35f, 0.75f), new GradientAlphaKey(0f, 1f) }
+        );
+        colLife.color = grad;
+
+        var renderer = root.GetComponent<ParticleSystemRenderer>();
+        renderer.renderMode = ParticleSystemRenderMode.Billboard;
+        renderer.sharedMaterial = GetSmokeMaterial();
+
+        ps.Play();
+        return root;
+    }
+
+    private static Vector3 SnapToGround(Vector3 worldPos)
+    {
+        Vector3 rayStart = new Vector3(worldPos.x, worldPos.y + 8f, worldPos.z);
+        RaycastHit[] hits = Physics.RaycastAll(rayStart, Vector3.down, 30f, ~0, QueryTriggerInteraction.Ignore);
+
+        float bestY = float.NegativeInfinity;
+        bool foundGround = false;
+
+        for (int i = 0; i < hits.Length; i++)
         {
-            GameObject puff = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            puff.name = $"SmokePuff_{i}";
-            puff.transform.SetParent(root.transform, false);
+            Collider col = hits[i].collider;
+            if (col.GetComponentInParent<BossHealth>() != null) continue;
+            if (col.GetComponentInParent<PlayerMovement>() != null) continue;
 
-            Collider c = puff.GetComponent<Collider>();
-            if (c != null) c.enabled = false;
-
-            if (i == 0)
+            if (hits[i].point.y > bestY)
             {
-                puff.transform.localPosition = Vector3.up * 1.6f;
-                puff.transform.localScale = new Vector3(radius * 0.9f, 3.6f, radius * 0.9f);
-            }
-            else
-            {
-                float angle = (i - 1) * (360f / (puffCount - 1)) * Mathf.Deg2Rad;
-                float dist = radius * 0.55f;
-                puff.transform.localPosition = new Vector3(Mathf.Cos(angle) * dist, 1.3f, Mathf.Sin(angle) * dist);
-                float puffSize = radius * 0.65f;
-                puff.transform.localScale = new Vector3(puffSize, 3.0f, puffSize);
-            }
-
-            Renderer r = puff.GetComponent<Renderer>();
-            if (r != null)
-            {
-                r.sharedMaterial = smokeMat;
-                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                bestY = hits[i].point.y;
+                foundGround = true;
             }
         }
 
-        return root;
+        if (foundGround) worldPos.y = bestY;
+        return worldPos;
     }
 
     // -----------------------------------------------------------------
@@ -423,8 +456,38 @@ public class StratagemSystem : MonoBehaviour
     private static Material GetBlueLaserMaterial() =>
         _blueLaserMat != null ? _blueLaserMat : (_blueLaserMat = CreateTranslucentMaterial(new Color(0.25f, 0.7f, 1f, 0.45f)));
 
-    private static Material GetSmokeMaterial() =>
-        _smokeMat != null ? _smokeMat : (_smokeMat = CreateTranslucentMaterial(new Color(0.75f, 0.78f, 0.82f, 0.42f)));
+    private static Material GetSmokeMaterial()
+    {
+        if (_smokeMat != null) return _smokeMat;
+        _smokeMat = CreateTranslucentMaterial(new Color(0.85f, 0.88f, 0.92f, 0.85f));
+        _smokeMat.mainTexture = GetSoftCircleTexture();
+        return _smokeMat;
+    }
+
+    private static Texture2D GetSoftCircleTexture()
+    {
+        if (_softCircleTex != null) return _softCircleTex;
+
+        const int size = 64;
+        _softCircleTex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        float half = size * 0.5f;
+
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float dx = (x - half + 0.5f) / half;
+                float dy = (y - half + 0.5f) / half;
+                float dist = Mathf.Sqrt(dx * dx + dy * dy);
+                float alpha = Mathf.Clamp01(1f - dist);
+                alpha = alpha * alpha; // Smooth soft smoke falloff
+                _softCircleTex.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+            }
+        }
+
+        _softCircleTex.Apply();
+        return _softCircleTex;
+    }
 
     private class SmokeZoneRuntime
     {
