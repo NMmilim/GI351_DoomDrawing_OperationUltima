@@ -9,6 +9,8 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
+    public event System.Action<float, float> OnHealthChanged;
+    public event System.Action OnDamaged;
     [Header("Player Health Settings")]
     public int maxHp = 100;
     private int _currentHp;
@@ -25,7 +27,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private void Awake()
     {
         _currentHp = maxHp;
-        BuildPlayerHUD();
+        
     }
 
     private void Update()
