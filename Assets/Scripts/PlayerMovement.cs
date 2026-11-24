@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public event System.Action<float, float> OnStaminaChanged;
+    
     [Header("Movement Settings")]
     public float DefaultSpeed;
     public float jumpForce = 5f;
@@ -126,12 +128,13 @@ public class PlayerMovement : MonoBehaviour
         //===================================================================
         //===================================================================
         stamina = Mathf.Clamp(stamina, 0f, maxStamina);
+        OnStaminaChanged?.Invoke(stamina, maxStamina);
         // Normal states when not sliding
         isSprinting = (!isSliding && Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed && stamina > 0 && isMoving);
         isCrouching = (!isSliding && Keyboard.current != null && Keyboard.current.leftCtrlKey.isPressed && !Keyboard.current.leftShiftKey.isPressed);
 
        
-        Debug.Log(speed);
+        
         Vector3 totalVelocity = (move * speed) + velocity + dashVelocity;
         controller.Move(totalVelocity * Time.deltaTime);
         dashVelocity = Vector3.MoveTowards(dashVelocity, Vector3.zero, dashDamp * Time.deltaTime);
