@@ -53,7 +53,6 @@ public class Bullet : MonoBehaviour
     {
         if (hitCollider == null) return;
 
-        SoundManager.Instance.PlaySound3D("BulletImpactFlesh", transform.position);
 
         // 1. NEVER DAMAGE THE PLAYER WHO SHOT THE BULLET
         if (hitCollider.GetComponentInParent<PlayerMovement>() != null ||
@@ -67,6 +66,7 @@ public class Bullet : MonoBehaviour
         IBossHittable weakpoint = hitCollider.GetComponentInParent<IBossHittable>();
         if (weakpoint != null)
         {
+            SoundManager.Instance.PlaySound3D("BulletImpactFlesh", transform.position);
             weakpoint.OnHit(damage, hitPoint, hitNormal);
             Destroy(gameObject);
             return;
@@ -78,7 +78,7 @@ public class Bullet : MonoBehaviour
         {
             damageable.TakeDamage(damage);
         }
-
+        SoundManager.Instance.PlaySound3D("BulletImpact", transform.position);
         Destroy(gameObject);
     }
 }
