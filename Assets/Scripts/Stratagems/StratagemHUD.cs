@@ -60,11 +60,11 @@ public class StratagemHUD : MonoBehaviour
         if (stratagemSystem.IsMenuOpen)
         {
             string headerColor = stratagemSystem.InputErrorFlash ? "#FF4444" : "#FFD94A";
-            _sb.AppendLine($"<color={headerColor}><b>STRATAGEMS [Q + ARROWS]</b></color>");
+            _sb.AppendLine($"<color={headerColor}><b>AIR SUPPORTS [Q + ARROWS]</b></color>");
         }
         else
         {
-            _sb.AppendLine("<color=#CCCCCC><b>STRATAGEMS</b> [Hold Q]</color>");
+            _sb.AppendLine("<color=#CCCCCC><b>AIR SUPPORT</b> [Hold Q]</color>");
         }
 
         // 1. Air Strike
