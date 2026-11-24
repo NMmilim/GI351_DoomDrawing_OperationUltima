@@ -13,6 +13,16 @@ public class FoleySoundEvents : MonoBehaviour
 
         SoundManager.Instance.PlaySound3D("ClothMove", transform.position);
     }
+    public void ClothMove2()
+    {
+        if (SoundManager.Instance == null)
+        {
+            Debug.LogWarning("SoundManager instance is missing.", this);
+            return;
+        }
+
+        SoundManager.Instance.PlaySound3D("ClothMove2", transform.position);
+    }
     public void WeaponRattle()
     {
         if (SoundManager.Instance == null)
