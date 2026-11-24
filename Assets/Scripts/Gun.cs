@@ -25,7 +25,7 @@ public class Gun : MonoBehaviour
         // Combine gun's rotation with the prefab's rotation so 90-degree tilt is preserved
         Quaternion bulletRotation = firepos.rotation * bulletprefab.rotation;
         Transform bullet = Instantiate(bulletprefab, firepos.position, bulletRotation);
-
+        SoundManager.Instance.PlaySound3D("Rifle_Fire", firepos.position);
         // Ignore collisions between this bullet and the entire player
         Collider bulletCol = bullet.GetComponent<Collider>();
         if (bulletCol != null)

@@ -53,6 +53,8 @@ public class Bullet : MonoBehaviour
     {
         if (hitCollider == null) return;
 
+        SoundManager.Instance.PlaySound3D("BulletImpactFlesh", transform.position);
+
         // 1. NEVER DAMAGE THE PLAYER WHO SHOT THE BULLET
         if (hitCollider.GetComponentInParent<PlayerMovement>() != null ||
             hitCollider.GetComponentInParent<PlayerHealth>() != null ||

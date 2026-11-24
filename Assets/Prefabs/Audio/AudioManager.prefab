@@ -263,6 +263,11 @@ MonoBehaviour:
   - groupID: MagPouch
     clips:
     - {fileID: 8300000, guid: 85a5c08bdf88a7544ba68c6d011a2229, type: 3}
+  - groupID: Rifle_Fire
+    clips:
+    - {fileID: 8300000, guid: 648f088172433c94f995929a0c7b6966, type: 3}
+    - {fileID: 8300000, guid: 701e88bbf8111044e9e8d677073f541c, type: 3}
+    - {fileID: 8300000, guid: 86de189f1141fe240813c3e6f1a38f40, type: 3}
 --- !u!114 &3954555000660303314
 MonoBehaviour:
   m_ObjectHideFlags: 0
