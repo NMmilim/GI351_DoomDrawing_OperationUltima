@@ -1,6 +1,4 @@
-using Unity.Entities;
-using Unity.Physics;
-using UnityEditor.PackageManager;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 public class PlayerHUD : MonoBehaviour
@@ -13,15 +11,23 @@ public class PlayerHUD : MonoBehaviour
         [Header("Damage Flash Settings")]
         [SerializeField] private float flashDuration = 0.4f;
         [SerializeField] private float maxFlashAlpha = 0.35f;
-    
 
+    [SerializeField] TMP_Text ammoText;
+    private Gun _gun;
         private PlayerHealth _playerHealth;
     private PlayerMovement _playerMovement;
     private float _flashTimer;
     void Start()
     {
+        _gun = FindAnyObjectByType<Gun>();
+        if (_gun != null)
+        {
+            _gun.OnAmmoChanged += UpdateAmmoText;
+            _gun.OnReloadStateChanged += HandleReloadState;
+            UpdateAmmoText(_gun.ammo, _gun.maxammo);
+        }
         // Auto-find the live Player in the scene (no need to drag Scene objects into a Prefab!)
-            _playerHealth = FindAnyObjectByType<PlayerHealth>();
+        _playerHealth = FindAnyObjectByType<PlayerHealth>();
         _playerMovement = FindAnyObjectByType<PlayerMovement>();
 
         if (_playerHealth != null)
@@ -51,6 +57,11 @@ public class PlayerHUD : MonoBehaviour
         {
             _playerMovement.OnStaminaChanged -= UpdateStaminaBar;
         }
+        if (_gun != null)
+        {
+            _gun.OnAmmoChanged -= UpdateAmmoText;
+            _gun.OnReloadStateChanged -= HandleReloadState;
+        }
     }
     private void Update()
     {
@@ -79,4 +90,21 @@ public class PlayerHUD : MonoBehaviour
     {
         _flashTimer = flashDuration;
     }
+    private void UpdateAmmoText(int current, int max)
+    {
+        if (ammoText == null) return;
+        ammoText.text = $"{current} / {max}";
+        ammoText.color = (current <= 5) ? new Color(1f, 0.3f, 0.2f) : Color.white; // Red warning on low ammo!
+    }
+
+    private void HandleReloadState(bool isReloading)
+    {
+        if (ammoText == null) return;
+        if (isReloading)
+        {
+            ammoText.text = "RELOADING...";
+            ammoText.color = Color.yellow;
+        }
+    }
+
 }

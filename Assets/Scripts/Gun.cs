@@ -13,9 +13,12 @@ public class Gun : MonoBehaviour
     public int ammo;
     public float reloadTime = 2f;
     private bool isReloading = false;
+    public event System.Action<int, int> OnAmmoChanged;    
+    public event System.Action<bool> OnReloadStateChanged;
     void Start()
     {
         ammo = maxammo;
+        OnAmmoChanged?.Invoke(ammo, maxammo);
     }
     void Update() 
     {
@@ -41,6 +44,7 @@ public class Gun : MonoBehaviour
         
         if (bulletprefab == null || firepos == null) return;
 ammo--;
+        OnAmmoChanged?.Invoke(ammo, maxammo);
 
         // Combine gun's rotation with the prefab's rotation so 90-degree tilt is preserved
         Quaternion bulletRotation = firepos.rotation * bulletprefab.rotation;
@@ -76,11 +80,14 @@ ammo--;
     {
         isReloading = true;
         Debug.Log("Reloading...");
-
+        OnReloadStateChanged?.Invoke(true);
         yield return new WaitForSeconds(reloadTime); // Pauses HERE for 2 seconds!                                 
 
         ammo = maxammo;
+        
         isReloading = false;
         Debug.Log("Reload complete!");
+        OnReloadStateChanged?.Invoke(false);
+        OnAmmoChanged?.Invoke(ammo, maxammo);
     }
 }
