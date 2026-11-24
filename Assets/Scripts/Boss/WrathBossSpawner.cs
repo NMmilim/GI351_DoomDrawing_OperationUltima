@@ -13,7 +13,7 @@ public class WrathBossSpawner : MonoBehaviour
     [Tooltip("World position to spawn bossPrefab (only used when bossPrefab is assigned and no boss is in the scene).")]
     public Vector3 bossSpawnPosition = new Vector3(0f, 0f, 15f);
 
-    [Tooltip("If true, automatically ensures Player has PlayerHealth and BossUI exists.")]
+    [Tooltip("If true, automatically ensures Player has PlayerHealth.")]
     public bool autoInitializeSystems = true;
 
     [Tooltip("Fallback ONLY for quick testing without a Prefab: builds the old procedural cube boss.")]
@@ -24,7 +24,6 @@ public class WrathBossSpawner : MonoBehaviour
         if (autoInitializeSystems)
         {
             EnsurePlayerSystems();
-            EnsureBossUI();
         }
 
         SpawnWrathBossIfMissing();
@@ -37,15 +36,6 @@ public class WrathBossSpawner : MonoBehaviour
         if (pm != null && pm.GetComponent<PlayerHealth>() == null)
         {
             pm.gameObject.AddComponent<PlayerHealth>();
-        }
-    }
-
-    private void EnsureBossUI()
-    {
-        if (FindAnyObjectByType<BossUI>() == null)
-        {
-            GameObject uiObj = new GameObject("BossHUDManager");
-            uiObj.AddComponent<BossUI>();
         }
     }
 

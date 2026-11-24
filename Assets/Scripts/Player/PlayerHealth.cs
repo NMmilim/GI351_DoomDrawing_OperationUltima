@@ -32,6 +32,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void Update()
     {
+
         // Fade out damage flash overlay
         if (_damageFlashOverlay != null && _flashTimer > 0f)
         {
@@ -70,6 +71,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         {
             Die();
         }
+        OnHealthChanged?.Invoke(_currentHp, maxHp);
+        OnDamaged?.Invoke();
     }
 
     private void Die()
