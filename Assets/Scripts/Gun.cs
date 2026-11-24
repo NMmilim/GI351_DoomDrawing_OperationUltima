@@ -6,15 +6,21 @@ public class Gun : MonoBehaviour
     public Transform bulletprefab;
     public Transform firepos;
     public float bulletlife = 3f;
-    public float bulletSpeed = 20f;
+    public float bulletSpeed = 960f;
 
 
-    public int maxammo = 30;
+    public int maxammo = 20;
     public int ammo;
-    public float reloadTime = 2f;
+    public int ammomax;
+    public float tacticalReloadTime = 3.25f;
+    public float emptyReloadTime = 4f;
+
     private bool isReloading = false;
     public event System.Action<int, int> OnAmmoChanged;    
     public event System.Action<bool> OnReloadStateChanged;
+    public event System.Action<bool> OnReloadStarted;
+    public event System.Action OnShot;
+    private PlayerMovement playerMovement;
     void Start()
     {
         ammo = maxammo;
@@ -22,33 +28,59 @@ public class Gun : MonoBehaviour
     }
     void Update() 
     {
-       
-        bool shootable = (ammo > 0 && !isReloading);
-        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame&&shootable)
+        bool isSprinting = playerMovement != null &&
+                           playerMovement.isSprinting;
+
+        bool wallBlocked = IsWallBlockingShot();
+
+        bool shootable = ammo > 0 &&
+                         !isReloading &&
+                         !isSprinting &&
+                         !wallBlocked &&
+                         Time.time >= nextFireTime;
+
+        if (Mouse.current != null)
         {
-            Shoot();
+            bool firePressed = fireMode == FireMode.Automatic
+                ? Mouse.current.leftButton.isPressed
+                : Mouse.current.leftButton.wasPressedThisFrame;
+
+            if (firePressed && shootable)
+            {
+                float secondsPerShot = 60f / roundsPerMinute;
+                nextFireTime = Time.time + secondsPerShot;
+
+                Shoot();
+            }
         }
-        bool reloadable = (ammo < maxammo);
-      
-        bool rPressed = Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame;
-        if (!isReloading && (ammo <= 0 || (rPressed && ammo < maxammo)))
+
+        bool rPressed = Keyboard.current != null &&
+                        Keyboard.current.rKey.wasPressedThisFrame;
+
+        if (!isReloading &&
+            (ammo <= 0 || (rPressed && ammo < maxammo)))
         {
             StartCoroutine(ReloadRoutine());
         }
-
     }
 
-    void Shoot()
+    private void Shoot()
     {
+        if (bulletprefab == null || firepos == null)
+        {
+            return;
+        }
 
-        
-        if (bulletprefab == null || firepos == null) return;
-ammo--;
+        ammo--;
         OnAmmoChanged?.Invoke(ammo, maxammo);
+        OnShot?.Invoke();
 
-        // Combine gun's rotation with the prefab's rotation so 90-degree tilt is preserved
         Quaternion bulletRotation = firepos.rotation * bulletprefab.rotation;
-        Transform bullet = Instantiate(bulletprefab, firepos.position, bulletRotation);
+        Transform bullet = Instantiate(
+            bulletprefab,
+            firepos.position,
+            bulletRotation);
+
         if (SoundManager.Instance != null)
         {
             SoundManager.Instance.PlaySound3D("Rifle_Fire", firepos.position);
@@ -69,25 +101,94 @@ ammo--;
 
         // Apply impulse velocity
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
+
         if (rb != null)
         {
-            rb.AddForce(firepos.forward.normalized * bulletSpeed, ForceMode.Impulse);
+            Vector3 muzzleVelocity =
+                firepos.forward.normalized * bulletSpeed;
+
+            rb.AddForce(
+                muzzleVelocity,
+                ForceMode.VelocityChange);
         }
 
         Destroy(bullet.gameObject, bulletlife);
     }
-     IEnumerator ReloadRoutine()
+     private IEnumerator ReloadRoutine()
     {
+        bool wasEmpty = ammo <= 0;
+
+        float currentReloadTime = wasEmpty
+            ? emptyReloadTime
+            : tacticalReloadTime;
+
         isReloading = true;
-        Debug.Log("Reloading...");
+
+        OnReloadStarted?.Invoke(wasEmpty);
         OnReloadStateChanged?.Invoke(true);
-        yield return new WaitForSeconds(reloadTime); // Pauses HERE for 2 seconds!                                 
+
+        yield return new WaitForSeconds(currentReloadTime);
 
         ammo = maxammo;
-        
         isReloading = false;
-        Debug.Log("Reload complete!");
+
         OnReloadStateChanged?.Invoke(false);
         OnAmmoChanged?.Invoke(ammo, maxammo);
+    }
+
+    private void Awake()
+    {
+        playerMovement = GetComponentInParent<PlayerMovement>();
+    }
+
+    [Header("Fire Settings")]
+    public FireMode fireMode = FireMode.SemiAutomatic;
+
+    [Min(1f)]
+    public float roundsPerMinute = 600f;
+
+    private float nextFireTime;
+    public enum FireMode
+    {
+        SemiAutomatic,
+        Automatic
+    }
+
+    [Header("Wall Check")]
+    public LayerMask wallLayers;
+    public float wallCheckDistance = 0.4f;
+    public float wallCheckRadius = 0.05f;
+
+    [Range(0f, 90f)]
+    public float maximumWallAngle = 60f;
+
+    private bool IsWallBlockingShot()
+    {
+        if (firepos == null)
+        {
+            return true;
+        }
+
+        Vector3 direction = firepos.forward.normalized;
+
+        bool hitSomething = Physics.SphereCast(
+            firepos.position,
+            wallCheckRadius,
+            direction,
+            out RaycastHit hit,
+            wallCheckDistance,
+            wallLayers,
+            QueryTriggerInteraction.Ignore);
+
+        if (!hitSomething)
+        {
+            return false;
+        }
+
+        float wallAngle = Vector3.Angle(
+            direction,
+            -hit.normal);
+
+        return wallAngle <= maximumWallAngle;
     }
 }
