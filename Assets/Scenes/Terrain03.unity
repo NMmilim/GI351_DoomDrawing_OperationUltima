@@ -935,8 +935,28 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1103553776549338129, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1718007691}
   m_SourcePrefab: {fileID: 100100000, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
+--- !u!1 &1718007690 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1103553776549338129, guid: 582351b40ee78e54ebfebd692f85a471, type: 3}
+  m_PrefabInstance: {fileID: 1718007689}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1718007691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1718007690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91409a910bb3e2d4194053612ebe32b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReloadSoundEvents
 --- !u!1 &1737234109
 GameObject:
   m_ObjectHideFlags: 0

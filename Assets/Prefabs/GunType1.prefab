@@ -236,6 +236,7 @@ GameObject:
   - component: {fileID: 5267077925534024524}
   - component: {fileID: 2888487075428795733}
   - component: {fileID: 2622821762263882806}
+  - component: {fileID: 4616880591228006648}
   m_Layer: 0
   m_Name: Rifle
   m_TagString: Untagged
@@ -276,6 +277,9 @@ MonoBehaviour:
   redDotSightPoint: {fileID: 2585650451219452829}
   cameraAimPoint: {fileID: 6268159015502288079}
   aimSpeed: 10
+  soundPoint: {fileID: 5267077925534024524}
+  aimSoundName: AimUp
+  unaimSoundName: AimDown
 --- !u!114 &2622821762263882806
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -295,6 +299,18 @@ MonoBehaviour:
   muzzleFlashPrefab: {fileID: 0}
   maxRange: 100
   fireRate: 0.12
+--- !u!114 &4616880591228006648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649902191804332789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94b4411a92a71c94ebb0e6c77b98be60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimationAudioBridge
 --- !u!1 &1744841754155323182
 GameObject:
   m_ObjectHideFlags: 0
@@ -953,6 +969,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e519a3ee7f3b2054e948ea18a1537c5c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9183978005757848663}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e519a3ee7f3b2054e948ea18a1537c5c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4274007084647061617}
   m_SourcePrefab: {fileID: 100100000, guid: e519a3ee7f3b2054e948ea18a1537c5c, type: 3}
 --- !u!4 &1389482118699557425 stripped
 Transform:
@@ -991,6 +1010,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4274007084647061617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5558151215164828297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91409a910bb3e2d4194053612ebe32b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReloadSoundEvents
 --- !u!4 &6597987187273587892 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1905918360856972140, guid: e519a3ee7f3b2054e948ea18a1537c5c, type: 3}
@@ -1083,6 +1114,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6a63d613150e1a845b5a7dd13f88b0e2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5162897929697217343}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6a63d613150e1a845b5a7dd13f88b0e2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8681795604539446769}
   m_SourcePrefab: {fileID: 100100000, guid: 6a63d613150e1a845b5a7dd13f88b0e2, type: 3}
 --- !u!4 &7357682624659562582 stripped
 Transform:
@@ -1116,3 +1150,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8681795604539446769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7876916633721502444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1c39f8ae8dbe974b88b63b49388d20f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FoleySoundEvents

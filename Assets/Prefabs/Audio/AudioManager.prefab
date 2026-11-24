@@ -179,12 +179,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundLibrary
   soundEffects:
-  - groupID: Pistol_Fire
-    clips:
-    - {fileID: 8300000, guid: 4ec1ccc025f4b6241bedc1235c8aad34, type: 3}
-  - groupID: Railgun_Fire
-    clips:
-    - {fileID: 8300000, guid: 056176dbb66d2da498c263a5939caf81, type: 3}
   - groupID: Click
     clips:
     - {fileID: 8300000, guid: b349839735a5da64baae41f2acf87501, type: 3}
@@ -204,29 +198,6 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 78812f18279b6774da7dd60819a9142e, type: 3}
     - {fileID: 8300000, guid: ed29882e7f4175642a0df9d282d49b85, type: 3}
     - {fileID: 8300000, guid: c7004848fd1b50e41a184c0fa68555d5, type: 3}
-  - groupID: Railgun_Charge
-    clips:
-    - {fileID: 8300000, guid: a6783dd0a0cdb21438c1c71569b2d03b, type: 3}
-  - groupID: Mag_Out
-    clips:
-    - {fileID: 8300000, guid: 81cc27322eea7464397560e5ceb32955, type: 3}
-  - groupID: Mag_In
-    clips:
-    - {fileID: 8300000, guid: d55885275d8db7c4f8a3ac15741292a0, type: 3}
-  - groupID: NPC_Pistol_Fire
-    clips:
-    - {fileID: 8300000, guid: c405ba6688f038a41be22e791a1be8ad, type: 3}
-  - groupID: Laser_Charging
-    clips:
-    - {fileID: 8300000, guid: ca30fede64b66f6468a536e09d6230fc, type: 3}
-  - groupID: Laser_Shoot
-    clips:
-    - {fileID: 8300000, guid: cc5e3e0123c13b5418538c3cb5136058, type: 3}
-    - {fileID: 8300000, guid: c31033098b9c3184da6263e0c2b1a472, type: 3}
-  - groupID: Mine_Launch
-    clips:
-    - {fileID: 8300000, guid: 331264fff2b4a1a47ae49d26d9b9b3e6, type: 3}
-    - {fileID: 8300000, guid: bee3a93d6653fc945b007fe781d38cb8, type: 3}
   - groupID: UI_Close
     clips:
     - {fileID: 8300000, guid: 0cb5ea3635aa25645bbc6dd721c416f1, type: 3}
@@ -236,36 +207,10 @@ MonoBehaviour:
   - groupID: Digital_Click
     clips:
     - {fileID: 8300000, guid: 30bd03a79dd99954b9d254d4eb85cfb2, type: 3}
-  - groupID: Warning
-    clips:
-    - {fileID: 8300000, guid: ca5eb888dd4aed34880a9801c545379d, type: 3}
-  - groupID: Overload
-    clips:
-    - {fileID: 8300000, guid: 6f20f3da44435824dad8aabf9eda7f3b, type: 3}
-  - groupID: Lightning_Strike
-    clips:
-    - {fileID: 8300000, guid: f390387405517c44ebcd7cde975c8faa, type: 3}
-  - groupID: Lightning_Charging
-    clips:
-    - {fileID: 8300000, guid: 862175f1d0530a74c829b6189cf03bf0, type: 3}
-  - groupID: Lightning_Impact
-    clips:
-    - {fileID: 8300000, guid: b4eb7396722b6234d943ffc8c08ae04a, type: 3}
-  - groupID: Asteroids_Impact
-    clips:
-    - {fileID: 8300000, guid: e002ae0a664210e498a4c7a9ef4e8466, type: 3}
-    - {fileID: 8300000, guid: 39bac4cafcd49804b957ee406bd484c6, type: 3}
-  - groupID: Asteroids_Destoryed
-    clips:
-    - {fileID: 8300000, guid: a14dba33132710d4fa5a4c38cd0ed304, type: 3}
-    - {fileID: 8300000, guid: 2f017511397df1c499e928c136be1a2f, type: 3}
   - groupID: Explosion
     clips:
     - {fileID: 8300000, guid: 920aa7452f390c941ac084beb1a4a4db, type: 3}
     - {fileID: 8300000, guid: ce5f20628d1802447a7186ac1de1fffe, type: 3}
-  - groupID: Detonation
-    clips:
-    - {fileID: 8300000, guid: 1bf9fbc7760558a4fa1571ed14bbf889, type: 3}
   - groupID: Footsteps
     clips:
     - {fileID: 8300000, guid: 146e97e964256ad4880dfffbfd79c239, type: 3}
@@ -280,6 +225,40 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 9e2e23e9d3267c649872b7ca25fef54d, type: 3}
     - {fileID: 8300000, guid: 5d2aa055ee3c335468d04175b83bac45, type: 3}
     - {fileID: 8300000, guid: 77969bf5e93c7d84d86d06715f0a879a, type: 3}
+  - groupID: MagIn
+    clips:
+    - {fileID: 8300000, guid: 78ffe134804403f4ca72ef85fb2e2617, type: 3}
+  - groupID: MagOut
+    clips:
+    - {fileID: 8300000, guid: fd6e7e5aedb019a45a97faa0ff0e7ac7, type: 3}
+  - groupID: SlideRelease
+    clips:
+    - {fileID: 8300000, guid: 775fe95e153dcff4196c4f0ffbcf09ad, type: 3}
+  - groupID: AimUp
+    clips:
+    - {fileID: 8300000, guid: 12044ab5febd2904f832a3cb75bd3562, type: 3}
+  - groupID: AimDown
+    clips:
+    - {fileID: 8300000, guid: 990ca5d4c8e989443b24b396cc111ce9, type: 3}
+  - groupID: ClothMove
+    clips:
+    - {fileID: 8300000, guid: 7e7ad43d2a8eec64f93a439b82bf3997, type: 3}
+    - {fileID: 8300000, guid: 13377c66063fbb94182b196751e77db5, type: 3}
+    - {fileID: 8300000, guid: c84ac1cb45c1143488133354159f37d6, type: 3}
+    - {fileID: 8300000, guid: b58eec50430ade247b7e4e0ef57bb1bd, type: 3}
+    - {fileID: 8300000, guid: 311babe7730e9e74fbd1723cfdc71444, type: 3}
+  - groupID: WeaponRattle
+    clips:
+    - {fileID: 8300000, guid: 8b0b35e7b910ce740ba12bc3de7cf8f2, type: 3}
+    - {fileID: 8300000, guid: fc8d2ed495b4a094f8de3a22c4dd0a54, type: 3}
+    - {fileID: 8300000, guid: 178e2c740f28bca47828f3df9ca1c40d, type: 3}
+    - {fileID: 8300000, guid: 7faf52e0ff93d7242b96abbd859f9fb2, type: 3}
+  - groupID: Velcro
+    clips:
+    - {fileID: 8300000, guid: d6ebae922a4420044a5124d768c4c2b1, type: 3}
+  - groupID: MagPouch
+    clips:
+    - {fileID: 8300000, guid: 85a5c08bdf88a7544ba68c6d011a2229, type: 3}
 --- !u!114 &3954555000660303314
 MonoBehaviour:
   m_ObjectHideFlags: 0
