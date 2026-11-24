@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
-
+using System.Collections;
 public class PlayerMovement : MonoBehaviour
 {
     public event System.Action<float, float> OnStaminaChanged;
@@ -131,6 +131,7 @@ public class PlayerMovement : MonoBehaviour
         OnStaminaChanged?.Invoke(stamina, maxStamina);
         // Normal states when not sliding
         isSprinting = (!isSliding && Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed && stamina > 0 && isMoving);
+        
         isCrouching = (!isSliding && Keyboard.current != null && Keyboard.current.leftCtrlKey.isPressed && !Keyboard.current.leftShiftKey.isPressed);
 
        

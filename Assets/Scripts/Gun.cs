@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using System.Collections;
 public class Gun : MonoBehaviour
 {
     public Transform bulletprefab;
@@ -8,24 +8,47 @@ public class Gun : MonoBehaviour
     public float bulletlife = 3f;
     public float bulletSpeed = 20f;
 
-    void Start() { }
 
+    public int maxammo = 30;
+    public int ammo;
+    public float reloadTime = 2f;
+    private bool isReloading = false;
+    void Start()
+    {
+        ammo = maxammo;
+    }
     void Update() 
-    { 
-        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+    {
+       
+        bool shootable = (ammo > 0 && !isReloading);
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame&&shootable)
         {
             Shoot();
         }
+        bool reloadable = (ammo < maxammo);
+      
+        bool rPressed = Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame;
+        if (!isReloading && (ammo <= 0 || (rPressed && ammo < maxammo)))
+        {
+            StartCoroutine(ReloadRoutine());
+        }
+
     }
 
     void Shoot()
     {
+
+        
         if (bulletprefab == null || firepos == null) return;
+ammo--;
 
         // Combine gun's rotation with the prefab's rotation so 90-degree tilt is preserved
         Quaternion bulletRotation = firepos.rotation * bulletprefab.rotation;
         Transform bullet = Instantiate(bulletprefab, firepos.position, bulletRotation);
-        SoundManager.Instance.PlaySound3D("Rifle_Fire", firepos.position);
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySound3D("Rifle_Fire", firepos.position);
+        }
         // Ignore collisions between this bullet and the entire player
         Collider bulletCol = bullet.GetComponent<Collider>();
         if (bulletCol != null)
@@ -48,5 +71,16 @@ public class Gun : MonoBehaviour
         }
 
         Destroy(bullet.gameObject, bulletlife);
+    }
+     IEnumerator ReloadRoutine()
+    {
+        isReloading = true;
+        Debug.Log("Reloading...");
+
+        yield return new WaitForSeconds(reloadTime); // Pauses HERE for 2 seconds!                                 
+
+        ammo = maxammo;
+        isReloading = false;
+        Debug.Log("Reload complete!");
     }
 }

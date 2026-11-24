@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7462517000825853182}
   - component: {fileID: 5751979914810027829}
   - component: {fileID: 5535318364983794999}
+  - component: {fileID: 2782900022255302078}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -124,6 +125,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHp: 100
+--- !u!114 &2782900022255302078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5733885420393572759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07b2bc4d5adb5ae41affdb785d41f01b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StratagemSystem
+  airStrikeName: AIR STRIKE
+  airStrikeCode: 000000000300000003000000i
+  airStrikeDelay: 3
+  airStrikeCooldown: 12
+  airStrikeDamage: 250
+  airStrikeExplosionRadius: 6
+  smokeName: SMOKE ORBITAL
+  smokeCode: 010000000200000003000000i
+  smokeCallDelay: 1
+  smokeCooldown: 15
+  smokeDuration: 8
+  smokeRadius: 9
 --- !u!1 &6515650697854952350
 GameObject:
   m_ObjectHideFlags: 0

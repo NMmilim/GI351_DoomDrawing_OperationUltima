@@ -13,6 +13,7 @@ public class PlayerHUD : MonoBehaviour
         [Header("Damage Flash Settings")]
         [SerializeField] private float flashDuration = 0.4f;
         [SerializeField] private float maxFlashAlpha = 0.35f;
+    
 
         private PlayerHealth _playerHealth;
     private PlayerMovement _playerMovement;
