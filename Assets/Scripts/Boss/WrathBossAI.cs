@@ -14,6 +14,7 @@ public class WrathBossAI : MonoBehaviour
     public enum BossState
     {
         Stalking,
+        Roaming,
         BullCharge_Windup,
         BullCharge_Rush,
         BullCharge_Recovery,
@@ -29,6 +30,8 @@ public class WrathBossAI : MonoBehaviour
     [Header("Targeting & Motion")]
     public Transform playerTarget;
     public float stalkSpeed = 4.5f;
+    public float roamSpeed = 2.8f;
+    public float roamRadius = 14f;
     public float rotationSpeed = 120f;
     public float idealCombatDistance = 8f;
 
@@ -77,8 +80,13 @@ public class WrathBossAI : MonoBehaviour
     private float     _chargeElapsed;
     private bool      _hasDealtChargeHit;
     private Coroutine _activeAttackCoroutine;
+    private bool      _isPlayerHidden;
+    private Vector3   _roamTarget;
+    private float     _roamTimer;
+    private float     _roamPauseTimer;
 
     public BossState CurrentState => _state;
+    public bool IsPlayerHidden => _isPlayerHidden;
     public event System.Action<BossState> OnStateChanged;
 
     private void Awake()
@@ -120,7 +128,7 @@ public class WrathBossAI : MonoBehaviour
         OnStateChanged?.Invoke(newState);
 
         // Optional Animator hooks (safe no-op if no Animator or parameters aren't created yet)
-        TrySetAnimBool("IsMoving", newState == BossState.Stalking);
+        TrySetAnimBool("IsMoving", newState == BossState.Stalking || newState == BossState.Roaming);
         TrySetAnimBool("IsStaggered", newState == BossState.Staggered);
         TrySetAnimBool("IsDead", newState == BossState.Defeated);
 
@@ -205,6 +213,10 @@ public class WrathBossAI : MonoBehaviour
                 TickStalking();
                 break;
 
+            case BossState.Roaming:
+                TickRoaming();
+                break;
+
             case BossState.BullCharge_Windup:
                 TickChargeWindup();
                 break;
@@ -260,6 +272,84 @@ public class WrathBossAI : MonoBehaviour
         {
             ChooseNextAttack(dist);
         }
+    }
+
+    // -----------------------------------------------------------------
+    //  State: Roaming (Lost sight of Player, e.g. inside Smoke Orbital)
+    // -----------------------------------------------------------------
+    public void SetPlayerHidden(bool hidden)
+    {
+        _isPlayerHidden = hidden;
+
+        if (_state == BossState.Defeated) return;
+
+        if (hidden)
+        {
+            if (_state != BossState.Staggered && _state != BossState.EnragedTransition)
+            {
+                StopActiveAttackCoroutine();
+                _telegraph.HideAll();
+                PickNewRoamPoint();
+                SetState(BossState.Roaming);
+            }
+        }
+        else if (_state == BossState.Roaming)
+        {
+            // Detected player again!
+            _attackCooldown = Mathf.Min(_attackCooldown, 1.5f);
+            SetState(BossState.Stalking);
+        }
+    }
+
+    private void TickRoaming()
+    {
+        if (!_isPlayerHidden)
+        {
+            SetState(BossState.Stalking);
+            return;
+        }
+
+        if (_roamPauseTimer > 0f)
+        {
+            _roamPauseTimer -= Time.deltaTime;
+            if (_roamPauseTimer <= 0f)
+            {
+                PickNewRoamPoint();
+            }
+            return;
+        }
+
+        _roamTimer -= Time.deltaTime;
+        Vector3 toPoint = _roamTarget - transform.position;
+        toPoint.y = 0f;
+
+        if (toPoint.sqrMagnitude <= 2.25f || _roamTimer <= 0f)
+        {
+            _roamPauseTimer = Random.Range(0.8f, 1.6f);
+            return;
+        }
+
+        LookAtTarget(_roamTarget, rotationSpeed * 0.65f);
+        MoveInDirection(toPoint.normalized, roamSpeed);
+    }
+
+    private void PickNewRoamPoint()
+    {
+        Vector2 offset = Random.insideUnitCircle * roamRadius;
+        if (offset.sqrMagnitude < 16f) offset = offset.normalized * 6f;
+        _roamTarget = transform.position + new Vector3(offset.x, 0f, offset.y);
+        _roamTimer = 4f;
+        _roamPauseTimer = 0f;
+    }
+
+    private BossState GetIdleCombatState()
+    {
+        if (_isPlayerHidden)
+        {
+            PickNewRoamPoint();
+            return BossState.Roaming;
+        }
+        return BossState.Stalking;
     }
 
     private void ChooseNextAttack(float distToPlayer)
@@ -353,7 +443,7 @@ public class WrathBossAI : MonoBehaviour
         _stateTimer -= Time.deltaTime;
         if (_stateTimer <= 0f)
         {
-            SetState(BossState.Stalking);
+            SetState(GetIdleCombatState());
         }
     }
 
@@ -429,7 +519,7 @@ public class WrathBossAI : MonoBehaviour
         _stateTimer -= Time.deltaTime;
         if (_stateTimer <= 0f)
         {
-            SetState(BossState.Stalking);
+            SetState(GetIdleCombatState());
         }
     }
 
@@ -486,7 +576,7 @@ public class WrathBossAI : MonoBehaviour
 
         if (_state == BossState.MagmaBurst)
         {
-            SetState(BossState.Stalking);
+            SetState(GetIdleCombatState());
         }
     }
 
@@ -541,7 +631,7 @@ public class WrathBossAI : MonoBehaviour
                 _visuals.SetKnockdownPose(0f);
                 _visuals.HideDizzyStars();
             }
-            SetState(BossState.Stalking);
+            SetState(GetIdleCombatState());
         }
     }
 
@@ -562,7 +652,7 @@ public class WrathBossAI : MonoBehaviour
         _stateTimer -= Time.deltaTime;
         if (_stateTimer <= 0f)
         {
-            SetState(BossState.Stalking);
+            SetState(GetIdleCombatState());
         }
     }
 

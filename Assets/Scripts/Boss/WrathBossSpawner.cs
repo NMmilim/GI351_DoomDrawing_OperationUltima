@@ -31,11 +31,15 @@ public class WrathBossSpawner : MonoBehaviour
 
     private void EnsurePlayerSystems()
     {
-        // Find player and attach PlayerHealth if missing
+        // Find player and attach PlayerHealth + StratagemSystem if missing
         PlayerMovement pm = FindAnyObjectByType<PlayerMovement>();
-        if (pm != null && pm.GetComponent<PlayerHealth>() == null)
+        if (pm != null)
         {
-            pm.gameObject.AddComponent<PlayerHealth>();
+            if (pm.GetComponent<PlayerHealth>() == null)
+                pm.gameObject.AddComponent<PlayerHealth>();
+
+            if (pm.GetComponent<StratagemSystem>() == null)
+                pm.gameObject.AddComponent<StratagemSystem>();
         }
     }
 
