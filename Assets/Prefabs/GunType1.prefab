@@ -299,6 +299,9 @@ MonoBehaviour:
   muzzleFlashPrefab: {fileID: 0}
   maxRange: 100
   fireRate: 0.12
+  tacticalReloadTime: 2
+  emptyReloadTime: 2.5
+  sprintSpeedThreshold: 6.5
 --- !u!114 &4616880591228006648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -450,7 +453,20 @@ MonoBehaviour:
   bulletprefab: {fileID: 9015415349364151523, guid: 78018aad95915bd46b639aee3985bef5, type: 3}
   firepos: {fileID: 1762730057545343019}
   bulletlife: 3
-  bulletSpeed: 20
+  bulletSpeed: 960
+  maxammo: 20
+  ammo: 0
+  ammomax: 20
+  tacticalReloadTime: 3.5
+  emptyReloadTime: 4.5
+  fireMode: 1
+  roundsPerMinute: 625
+  wallLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  wallCheckDistance: 1.5
+  wallCheckRadius: 0.05
+  maximumWallAngle: 60
 --- !u!1 &3497454323975897416
 GameObject:
   m_ObjectHideFlags: 0
@@ -756,7 +772,7 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 4294967295
-  checkDistance: 2
+  checkDistance: 1.75
   sphereRadius: 0.08
   ignoredTags:
   - Player

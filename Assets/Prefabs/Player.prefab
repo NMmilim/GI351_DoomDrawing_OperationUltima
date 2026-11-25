@@ -83,6 +83,12 @@ MonoBehaviour:
   dashForce: 15
   dashDamp: 25
   slideDuration: 0.7
+  slideSoundName: Slide
+  slideSoundPoint: {fileID: 7408097442274139996}
+  dashSoundName: Dash
+  dashSoundPoint: {fileID: 7408097442274139996}
+  jumpSoundName: Jump
+  jumpSoundPoint: {fileID: 7408097442274139996}
   groundCheck: {fileID: 4995881138984590677}
   groundDistance: 0.4
   groundLayer:
@@ -139,16 +145,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StratagemSystem
   airStrikeName: AIR STRIKE
   airStrikeCode: 000000000300000003000000i
-  airStrikeDelay: 3
-  airStrikeCooldown: 12
-  airStrikeDamage: 250
-  airStrikeExplosionRadius: 6
+  airStrikeDelay: 5
+  airStrikeCooldown: 30
+  airStrikeDamage: 5000
+  airStrikeExplosionRadius: 10
   smokeName: SMOKE ORBITAL
   smokeCode: 010000000200000003000000i
   smokeCallDelay: 1
   smokeCooldown: 15
   smokeDuration: 8
   smokeRadius: 9
+  stratagemInputSoundName: Digital_Click
+  airSupportSoundName: AirSupport
+  orbitalStrikeSoundName: OrbitalSmoke
+  airSupportExplosionSoundName: Explosion
+  smokeLandedSoundName: SmokeLanded
 --- !u!1 &6515650697854952350
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,7 +517,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310613984484945272, guid: 10acd861d07d7ce44be1e1ca071c3551, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.0710001
+      value: 1.182
       objectReference: {fileID: 0}
     - target: {fileID: 3310613984484945272, guid: 10acd861d07d7ce44be1e1ca071c3551, type: 3}
       propertyPath: m_LocalRotation.w

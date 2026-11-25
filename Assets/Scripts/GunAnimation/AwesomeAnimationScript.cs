@@ -14,8 +14,48 @@ public class AwesomeAnimationScript : MonoBehaviour
     public GameObject muzzleFlashPrefab; // Optional muzzle flash particle
     public float maxRange = 100f;
     public float fireRate = 0.12f;
+    public float tacticalReloadTime = 2f;
+    public float emptyReloadTime = 2.5f;
+
+    [Header("Movement Animation")]
+    public float sprintSpeedThreshold = 6.5f;
 
     private float nextFireTime = 0f;
+    private Gun gun;
+    private bool isReloading;
+    private PlayerMovement playerMovement;
+    private CharacterController characterController;
+
+    private void Awake()
+    {
+        gun = GetComponentInParent<Gun>();
+        playerMovement = GetComponentInParent<PlayerMovement>();
+        characterController = GetComponentInParent<CharacterController>();
+    }
+
+    private void OnEnable()
+    {
+        if (gun == null)
+        {
+            return;
+        }
+
+        gun.OnShot += HandleShot;
+        gun.OnReloadStarted += HandleReloadStarted;
+        gun.OnReloadStateChanged += HandleReloadStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        if (gun == null)
+        {
+            return;
+        }
+
+        gun.OnShot -= HandleShot;
+        gun.OnReloadStarted -= HandleReloadStarted;
+        gun.OnReloadStateChanged -= HandleReloadStateChanged;
+    }
 
     void Start()
     {
@@ -23,32 +63,77 @@ public class AwesomeAnimationScript : MonoBehaviour
             mainCamera = Camera.main.transform;
     }
 
-    void Update()
+    private void Update()
     {
-        if (Mouse.current == null || Keyboard.current == null) return;
-
-        // 1. Sprinting (Hold Left Shift)
-        bool isSprinting = Keyboard.current.leftShiftKey.isPressed;
-        anim1.SetBool("isSprinting", isSprinting);
-        anim2.SetBool("isSprinting", isSprinting);
-
-        // 2. Shooting (Hold or Click Left Mouse Button)
-        if (Mouse.current.leftButton.isPressed && Time.time >= nextFireTime)
+        if (playerMovement == null)
         {
-            nextFireTime = Time.time + fireRate;
-            Shoot();
+            return;
         }
 
-        // 3. Reloading (Press R)
-        if (Keyboard.current.rKey.wasPressedThisFrame)
+        float currentSpeed = 0f;
+
+        if (characterController != null)
         {
-            anim1.SetTrigger("Reload");
-            anim2.SetTrigger("Reload");
+            Vector3 velocity = characterController.velocity;
+            velocity.y = 0f;
+            currentSpeed = velocity.magnitude;
+        }
+
+        bool isSprinting = !isReloading &&
+                           playerMovement.isSprinting &&
+                           currentSpeed > playerMovement.DefaultSpeed;
+
+        if (anim1 != null)
+        {
+            anim1.SetFloat("Speed", currentSpeed);
+            anim1.SetBool("isSprinting", isSprinting);
+        }
+
+        if (anim2 != null)
+        {
+            anim2.SetFloat("Speed", currentSpeed);
+            anim2.SetBool("isSprinting", isSprinting);
+        }
+    }
+
+    private void HandleReloadStarted(bool wasEmpty)
+    {
+        string triggerName = wasEmpty
+            ? "ReloadEmpty"
+            : "ReloadTactical";
+
+        if (anim1 != null)
+        {
+            anim1.SetTrigger(triggerName);
+        }
+
+        if (anim2 != null)
+        {
+            anim2.SetTrigger(triggerName);
+        }
+    }
+
+    private void HandleAmmoChanged(int currentAmmo, int maximumAmmo)
+    {
+        bool isEmpty = currentAmmo <= 0;
+
+        if (anim1 != null)
+        {
+            anim1.SetBool("IsEmpty", isEmpty);
+        }
+
+        if (anim2 != null)
+        {
+            anim2.SetBool("IsEmpty", isEmpty);
         }
     }
 
     void Shoot()
     {
+        // Don't shoot if reloading
+        if (isReloading)
+            return;
+
         // Play Shoot animations on both Arms and Rifle
         anim1.SetTrigger("Shoot");
         anim2.SetTrigger("Shoot");
@@ -84,5 +169,41 @@ public class AwesomeAnimationScript : MonoBehaviour
 
         validHit = default;
         return false;
+    }
+
+    private void HandleShot()
+    {
+        if (isReloading)
+        {
+            return;
+        }
+
+        if (anim1 != null)
+        {
+            anim1.SetTrigger("Shoot");
+        }
+
+        if (anim2 != null)
+        {
+            anim2.SetTrigger("Shoot");
+        }
+    }
+
+    private void HandleReloadStateChanged(bool reloadState)
+    {
+        isReloading = reloadState;
+
+        if (reloadState)
+        {
+            if (anim1 != null)
+            {
+                anim1.SetBool("isSprinting", false);
+            }
+
+            if (anim2 != null)
+            {
+                anim2.SetBool("isSprinting", false);
+            }
+        }
     }
 }

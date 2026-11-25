@@ -18,6 +18,18 @@ public class PlayerMovement : MonoBehaviour
     public float slideDuration = 3f; // Slide lasts 3 seconds
     private float slideTimer = 0f;
 
+    [Header("Slide Sound")]
+    public string slideSoundName = "Slide";
+    public Transform slideSoundPoint;
+
+    [Header("Dash Sound")]
+    public string dashSoundName = "Dash";
+    public Transform dashSoundPoint;
+
+    [Header("Jump Sound")]
+    public string jumpSoundName = "Jump";
+    public Transform jumpSoundPoint;
+
     private CharacterController controller;
     public Transform groundCheck;
     public float groundDistance = 0.4f;
@@ -69,10 +81,27 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = -2f;
         } 
         // Jump
-        bool jumpPressed = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        bool jumpPressed = Keyboard.current != null &&
+                   Keyboard.current.spaceKey.wasPressedThisFrame;
+
         if (jumpPressed && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpForce * -2f * gravity);
+
+            if (SoundManager.Instance == null)
+            {
+                Debug.LogWarning("Jump sound failed: SoundManager.Instance is missing.", this);
+            }
+            else
+            {
+                Vector3 soundPosition = jumpSoundPoint != null
+                    ? jumpSoundPoint.position
+                    : transform.position;
+
+                SoundManager.Instance.PlaySound3D(
+                    jumpSoundName,
+                    soundPosition);
+            }
         }
         //===================================================================
 
@@ -101,10 +130,26 @@ public class PlayerMovement : MonoBehaviour
         //==========================CONTROL==================================
         //===================================================================
         // Start slide: Press Ctrl while sprinting (and have stamina)
-        if (!isSliding && Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed && Keyboard.current.leftCtrlKey.wasPressedThisFrame && isMoving && stamina > 0)
+        if (!isSliding &&
+    Keyboard.current != null &&
+    Keyboard.current.leftShiftKey.isPressed &&
+    Keyboard.current.leftCtrlKey.wasPressedThisFrame &&
+    isMoving &&
+    stamina > 0)
         {
             isSliding = true;
-            slideTimer = slideDuration; // Start 3-second timer
+            slideTimer = slideDuration;
+
+            if (SoundManager.Instance != null)
+            {
+                Vector3 soundPosition = slideSoundPoint != null
+                    ? slideSoundPoint.position
+                    : transform.position;
+
+                SoundManager.Instance.PlaySound3D(
+                    slideSoundName,
+                    soundPosition);
+            }
         }
 
         // Handle active slide
@@ -118,11 +163,32 @@ public class PlayerMovement : MonoBehaviour
                 isSliding = false;
             }
         } 
-        if (Keyboard.current != null && Keyboard.current.altKey.wasPressedThisFrame && stamina > 40)
+        if (Keyboard.current != null &&
+    Keyboard.current.altKey.wasPressedThisFrame &&
+    stamina > 40f)
         {
             stamina -= 40f;
-            Vector3 dashDirection = move != Vector3.zero ? move.normalized : transform.forward;
+
+            Vector3 dashDirection = move != Vector3.zero
+                ? move.normalized
+                : transform.forward;
+
             dashVelocity = dashDirection * dashForce;
+
+            if (SoundManager.Instance == null)
+            {
+                Debug.LogWarning("Dash sound failed: SoundManager.Instance is missing.", this);
+            }
+            else
+            {
+                Vector3 soundPosition = dashSoundPoint != null
+                    ? dashSoundPoint.position
+                    : transform.position;
+
+                SoundManager.Instance.PlaySound3D(
+                    dashSoundName,
+                    soundPosition);
+            }
         }
         //===================================================================
         //===================================================================

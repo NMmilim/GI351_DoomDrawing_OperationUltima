@@ -268,6 +268,33 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 648f088172433c94f995929a0c7b6966, type: 3}
     - {fileID: 8300000, guid: 701e88bbf8111044e9e8d677073f541c, type: 3}
     - {fileID: 8300000, guid: 86de189f1141fe240813c3e6f1a38f40, type: 3}
+  - groupID: Slide
+    clips:
+    - {fileID: 8300000, guid: 54cc44d9b7249984d84c73eb70f2b132, type: 3}
+    - {fileID: 8300000, guid: 3f0d1d7b3b1ae2c4aa632a9d5648d0a4, type: 3}
+    - {fileID: 8300000, guid: 0d5ac8d4f19b49047a011d2b663e446a, type: 3}
+    - {fileID: 8300000, guid: 0d5ac8d4f19b49047a011d2b663e446a, type: 3}
+  - groupID: Dash
+    clips:
+    - {fileID: 8300000, guid: 03c57c311a18ffe45972110e4208049d, type: 3}
+    - {fileID: 8300000, guid: b907603dea198b04ea0ab86a8e9154b0, type: 3}
+  - groupID: Jump
+    clips:
+    - {fileID: 8300000, guid: 802d27288caee3e4a82053f3c2320f8d, type: 3}
+    - {fileID: 8300000, guid: d9968fdfba114ff46b58dadb1e62fa7e, type: 3}
+    - {fileID: 8300000, guid: 75ffb44107c7aa24f80889a89cfb657d, type: 3}
+  - groupID: AirSupport
+    clips:
+    - {fileID: 8300000, guid: e2d4b4be5ef8ed3439b0854d4d4111ea, type: 3}
+    - {fileID: 8300000, guid: 56b5cc72b31f62945afe358d335292d3, type: 3}
+    - {fileID: 8300000, guid: c22bb707a34df7d4aae7d5e4efa9ad67, type: 3}
+  - groupID: SmokeLanded
+    clips:
+    - {fileID: 8300000, guid: 6dfd478c04c00594e8dfb42243ce85f1, type: 3}
+  - groupID: OrbitalSmoke
+    clips:
+    - {fileID: 8300000, guid: 309f66d9c535b6b4a8208223caa2bf4c, type: 3}
+    - {fileID: 8300000, guid: 5b3927e923ed1e241a5ec9317c8b7d14, type: 3}
 --- !u!114 &3954555000660303314
 MonoBehaviour:
   m_ObjectHideFlags: 0

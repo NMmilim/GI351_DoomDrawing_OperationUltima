@@ -124,22 +124,46 @@ public class WrathBossAI : MonoBehaviour
     private void SetState(BossState newState)
     {
         if (_state == newState) return;
+
         _state = newState;
         OnStateChanged?.Invoke(newState);
 
-        // Optional Animator hooks (safe no-op if no Animator or parameters aren't created yet)
-        TrySetAnimBool("IsMoving", newState == BossState.Stalking || newState == BossState.Roaming);
+        bool isMoving = newState == BossState.Stalking ||
+                        newState == BossState.Roaming;
+
+        TrySetAnimBool("IsMoving", isMoving);
         TrySetAnimBool("IsStaggered", newState == BossState.Staggered);
         TrySetAnimBool("IsDead", newState == BossState.Defeated);
 
         switch (newState)
         {
-            case BossState.BullCharge_Windup: TrySetAnimTrigger("ChargeWindup"); break;
-            case BossState.BullCharge_Rush:   TrySetAnimTrigger("ChargeRush");   break;
-            case BossState.GroundSlam_Windup: TrySetAnimTrigger("SlamWindup");   break;
-            case BossState.MagmaBurst:        TrySetAnimTrigger("MagmaBurst");   break;
-            case BossState.EnragedTransition: TrySetAnimTrigger("Enrage");       break;
-            case BossState.Defeated:          TrySetAnimTrigger("Death");        break;
+            case BossState.BullCharge_Windup:
+                TrySetAnimTrigger("DashPrepare");
+                break;
+
+            case BossState.BullCharge_Rush:
+                TrySetAnimTrigger("Dash");
+                break;
+
+            case BossState.GroundSlam_Windup:
+                TrySetAnimTrigger("Slam");
+                break;
+
+            case BossState.GroundSlam_Impact:
+                TrySetAnimTrigger("SlamImpact");
+                break;
+
+            case BossState.MagmaBurst:
+                TrySetAnimTrigger("ShootFire");
+                break;
+
+            case BossState.EnragedTransition:
+                TrySetAnimTrigger("Enrage");
+                break;
+
+            case BossState.Defeated:
+                TrySetAnimTrigger("Death");
+                break; 
         }
     }
 
@@ -255,12 +279,15 @@ public class WrathBossAI : MonoBehaviour
         LookAtTarget(playerTarget.position, rotationSpeed);
 
         float dist = Vector3.Distance(transform.position, playerTarget.position);
+        bool shouldWalk = dist > idealCombatDistance * 0.75f;
 
-        // Move toward player horizontally until in combat range
-        if (dist > idealCombatDistance * 0.75f)
+        TrySetAnimBool("IsMoving", shouldWalk);
+
+        if (shouldWalk)
         {
             Vector3 toPlayer = playerTarget.position - transform.position;
             toPlayer.y = 0f;
+
             if (toPlayer.sqrMagnitude > 0.001f)
             {
                 MoveInDirection(toPlayer.normalized, stalkSpeed);
@@ -268,6 +295,7 @@ public class WrathBossAI : MonoBehaviour
         }
 
         _attackCooldown -= Time.deltaTime;
+
         if (_attackCooldown <= 0f)
         {
             ChooseNextAttack(dist);
@@ -476,22 +504,26 @@ public class WrathBossAI : MonoBehaviour
 
     private void ExecuteSlamImpact()
     {
+        // Change from windup to impact before applying damage.
+        SetState(BossState.GroundSlam_Impact);
+
         _telegraph.HideSlamCircle();
         Vector3 feetPos = GetFeetPosition();
 
-        // Check damage in radius around the boss's feet (each PlayerHealth damaged at most once per slam)
+        // Damage is applied at the exact impact moment.
         Collider[] hits = Physics.OverlapSphere(feetPos, slamRadius);
         HashSet<PlayerHealth> damagedPlayers = new HashSet<PlayerHealth>();
+
         foreach (Collider col in hits)
         {
             PlayerHealth ph = col.GetComponentInParent<PlayerHealth>();
+
             if (ph != null && damagedPlayers.Add(ph))
             {
                 ph.TakeDamage(slamDamage);
             }
         }
 
-        // Spawn visual ground dust ring at feet
         SpawnShockwaveVFX(feetPos);
 
         SetState(BossState.GroundSlam_Recovery);
