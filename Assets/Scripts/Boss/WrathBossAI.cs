@@ -504,15 +504,20 @@ public class WrathBossAI : MonoBehaviour
 
     private void ExecuteSlamImpact()
     {
-        // Change from windup to impact before applying damage.
         SetState(BossState.GroundSlam_Impact);
+
+        CameraShake cameraShake = FindAnyObjectByType<CameraShake>();
+        if (cameraShake != null)
+        {
+            cameraShake.Shake(1.5f, 0.35f);
+        }
 
         _telegraph.HideSlamCircle();
         Vector3 feetPos = GetFeetPosition();
 
-        // Damage is applied at the exact impact moment.
         Collider[] hits = Physics.OverlapSphere(feetPos, slamRadius);
-        HashSet<PlayerHealth> damagedPlayers = new HashSet<PlayerHealth>();
+        HashSet<PlayerHealth> damagedPlayers =
+            new HashSet<PlayerHealth>();
 
         foreach (Collider col in hits)
         {

@@ -187,6 +187,12 @@ public class AwesomeAnimationScript : MonoBehaviour
         {
             anim2.SetTrigger("Shoot");
         }
+
+        CameraShake cameraShake = FindAnyObjectByType<CameraShake>();
+        if (cameraShake != null)
+        {
+            cameraShake.Shake(0.2f, 0.08f);
+        }
     }
 
     private void HandleReloadStateChanged(bool reloadState)

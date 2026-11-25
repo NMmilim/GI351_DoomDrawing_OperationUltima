@@ -225,6 +225,12 @@ SpawnExplosionSphere(
     strikePos + Vector3.up * 2.0f,
     airStrikeExplosionRadius);
 
+CameraShake cameraShake = FindAnyObjectByType<CameraShake>();
+if (cameraShake != null)
+{
+    cameraShake.Shake(2f, 0.8f);
+}
+
         // Force damage onto the Boss
         if (boss != null && !boss.IsDead)
         {
