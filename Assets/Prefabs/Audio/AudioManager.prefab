@@ -295,6 +295,12 @@ MonoBehaviour:
     clips:
     - {fileID: 8300000, guid: 309f66d9c535b6b4a8208223caa2bf4c, type: 3}
     - {fileID: 8300000, guid: 5b3927e923ed1e241a5ec9317c8b7d14, type: 3}
+  - groupID: Warth_RangedAttack
+    clips:
+    - {fileID: 8300000, guid: 9f48a553a8eced344ae1fa080f10d1ca, type: 3}
+  - groupID: FireBall
+    clips:
+    - {fileID: 8300000, guid: a95dca43b33cab547bc3619dc1618d21, type: 3}
 --- !u!114 &3954555000660303314
 MonoBehaviour:
   m_ObjectHideFlags: 0
