@@ -248,7 +248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8eae2e00e897c2419c3b2a069429c07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bullet
-  damage: 50
+  damage: 70
 --- !u!54 &-5709681448541596826
 Rigidbody:
   m_ObjectHideFlags: 0

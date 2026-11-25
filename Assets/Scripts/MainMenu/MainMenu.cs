@@ -12,17 +12,17 @@ public class MainMenu : MonoBehaviour
     private void Start()
     {
         LoadVolume();
-        MusicManager.Instance.PlayMusic("SpaceBGM"); //test  
+        //MusicManager.Instance.PlayMusic("SpaceBGM"); //test  
     }
     public void Play()
     {
         LevelManager.Instance.LoadScene("Terrain03", "CrossFade");
-        MusicManager.Instance.PlayMusic("SpaceBGM"); //test
+        //MusicManager.Instance.PlayMusic("SpaceBGM"); //test
     }
     public void Menu()
     {
         LevelManager.Instance.LoadScene("GameMenu", "CrossFade");
-        MusicManager.Instance.PlayMusic("SpaceBGM"); //test
+       // MusicManager.Instance.PlayMusic("SpaceBGM"); //test
     }
 
 
