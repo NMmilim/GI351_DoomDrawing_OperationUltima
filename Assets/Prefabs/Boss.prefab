@@ -334,6 +334,8 @@ MonoBehaviour:
   attackIntervalMin: 2.5
   attackIntervalMax: 4
   staggerDuration: 4
+  rangedAttackSoundName: Warth_RangedAttack
+  fireballFlySoundName: FireBallFlyBy
 --- !u!1 &7957640074346450362
 GameObject:
   m_ObjectHideFlags: 0

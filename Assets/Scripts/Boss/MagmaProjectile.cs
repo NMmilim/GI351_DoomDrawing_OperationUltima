@@ -12,6 +12,9 @@ public class MagmaProjectile : MonoBehaviour
     public float blastRadius = 3f;
     public float lifetime = 5f;
 
+    [Header("Audio")]
+    public string flySoundName = "FireballFly";
+
     private Vector3 _velocity;
     private bool    _exploded;
 
@@ -34,8 +37,17 @@ public class MagmaProjectile : MonoBehaviour
     public void Init(Vector3 targetPos)
     {
         Vector3 dir = (targetPos - transform.position).normalized;
+
         _velocity = dir * speed;
         transform.rotation = Quaternion.LookRotation(dir);
+
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySound3D(
+                flySoundName,
+                transform.position);
+        }
+
         Destroy(gameObject, lifetime);
     }
 

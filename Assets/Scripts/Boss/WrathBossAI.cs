@@ -62,6 +62,10 @@ public class WrathBossAI : MonoBehaviour
     public float attackIntervalMax = 4.0f;
     public float staggerDuration = 4.0f;
 
+    [Header("Boss Ranged Attack Sounds")]
+    public string rangedAttackSoundName = "BossRangedAttack";
+    public string fireballFlySoundName = "FireballFly";
+
     // Component References
     private BossHealth          _health;
     private BossTelegraph       _telegraph;
@@ -608,8 +612,20 @@ public class WrathBossAI : MonoBehaviour
                 }
             }
 
-            MagmaProjectile mp = proj.GetComponent<MagmaProjectile>() ?? proj.AddComponent<MagmaProjectile>();
+            MagmaProjectile mp =
+                proj.GetComponent<MagmaProjectile>() ??
+                proj.AddComponent<MagmaProjectile>();
+
+            mp.flySoundName = fireballFlySoundName;
+
             mp.Init(playerTarget.position + Vector3.up * 0.5f);
+
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlaySound3D(
+                    rangedAttackSoundName,
+                    spawnPoint);
+            }
 
             yield return new WaitForSeconds(timeBetweenShots);
         }
