@@ -107,4 +107,26 @@ public class PlayerHUD : MonoBehaviour
         }
     }
 
+    public void HideGameplayHud()
+    {
+        if (hpSlider != null)
+        {
+            hpSlider.gameObject.SetActive(false);
+        }
+
+        if (staminaSlider != null)
+        {
+            staminaSlider.gameObject.SetActive(false);
+        }
+
+        if (damageFlashImage != null)
+        {
+            damageFlashImage.gameObject.SetActive(false);
+        }
+
+        if (ammoText != null)
+        {
+            ammoText.gameObject.SetActive(false);
+        }
+    }
 }

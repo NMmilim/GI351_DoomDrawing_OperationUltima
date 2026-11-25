@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3220504394934997697}
   m_Layer: 0
   m_Name: magma
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50,6 +50,7 @@ MonoBehaviour:
   damage: 25
   blastRadius: 3
   lifetime: 5
+  flySoundName: FireballFly
 --- !u!1 &7054601399395693517
 GameObject:
   m_ObjectHideFlags: 0

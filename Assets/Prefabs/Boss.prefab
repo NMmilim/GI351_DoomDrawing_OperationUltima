@@ -285,6 +285,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossHealth
   bossName: WRATH
   maxHp: 50000
+  bossSpawnSoundName: BossSpawn
   enrageThreshold: 0.5
   damageToStagger: 2500
 --- !u!114 &5647493654526582692

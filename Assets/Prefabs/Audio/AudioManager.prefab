@@ -301,6 +301,9 @@ MonoBehaviour:
   - groupID: FireBallFlyBy
     clips:
     - {fileID: 8300000, guid: a95dca43b33cab547bc3619dc1618d21, type: 3}
+  - groupID: BossSpawn
+    clips:
+    - {fileID: 8300000, guid: 0b77ee01aafc6ba44a2df659253eef42, type: 3}
 --- !u!114 &3954555000660303314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,12 +331,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MusicLibrary
   tracks:
-  - trackName: Placeholder
-    clip: {fileID: 8300000, guid: 0a6d93a6cef105647a46ab7830e1c0ce, type: 3}
   - trackName: MainMenu
-    clip: {fileID: 8300000, guid: a80c35d5c9f09b3408186a59f8661ae2, type: 3}
-  - trackName: SpaceBGM
-    clip: {fileID: 8300000, guid: ff4e0deb7a4ee0040b5fdb1f6d0ac439, type: 3}
+    clip: {fileID: 8300000, guid: 3daae7aea5402be429ca9fb2890482e5, type: 3}
+  - trackName: PhraseOne
+    clip: {fileID: 8300000, guid: e7f3a363586f2c94b8c2d1451ee462cd, type: 3}
+  - trackName: PhraseTwo
+    clip: {fileID: 8300000, guid: c7745b8203390254d959374625b1fe3b, type: 3}
 --- !u!114 &7564196662603121603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -348,6 +351,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MusicManager
   musicLibrary: {fileID: 8848745242903279028}
   musicSource: {fileID: 5567116591032264648}
+  phaseTwoTrackName: PhraseTwo
 --- !u!1 &8928968071434665847
 GameObject:
   m_ObjectHideFlags: 0

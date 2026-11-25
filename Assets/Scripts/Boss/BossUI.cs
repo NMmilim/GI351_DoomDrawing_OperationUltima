@@ -111,6 +111,35 @@ public class BossUI : MonoBehaviour
 
     public void ShowDefeatBanner()
     {
-        if (loseBanner != null) loseBanner.SetActive(true);
+        if (loseBanner == null)
+        {
+            return;
+        }
+
+        loseBanner.SetActive(true);
+        loseBanner.transform.SetAsLastSibling();
+    }
+
+    public void HideGameplayHud()
+    {
+        if (healthSlider != null)
+        {
+            healthSlider.gameObject.SetActive(false);
+        }
+
+        if (delayedSlider != null)
+        {
+            delayedSlider.gameObject.SetActive(false);
+        }
+
+        if (nameText != null)
+        {
+            nameText.gameObject.SetActive(false);
+        }
+
+        if (winBanner != null)
+        {
+            winBanner.SetActive(false);
+        }
     }
 }

@@ -10,6 +10,10 @@ public class BossHealth : MonoBehaviour, IDamageable
     [Header("Health Settings")]
     public string bossName = "WRATH - THE CONSUMING FLAME";
     public int maxHp = 1200;
+
+    [Header("Spawn Sound")]
+    public string bossSpawnSoundName = "BossSpawn";
+
     private int _currentHp;
     private bool _isDead;
 
@@ -41,6 +45,19 @@ public class BossHealth : MonoBehaviour, IDamageable
 
     private void Start()
     {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySound3D(
+                bossSpawnSoundName,
+                transform.position);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "Boss spawn sound failed: SoundManager.Instance is missing.",
+                this);
+        }
+
         OnHealthChanged?.Invoke(_currentHp, maxHp);
     }
 

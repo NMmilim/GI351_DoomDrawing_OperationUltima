@@ -464,7 +464,7 @@ MonoBehaviour:
   wallLayers:
     serializedVersion: 2
     m_Bits: 0
-  wallCheckDistance: 1.5
+  wallCheckDistance: 0.5
   wallCheckRadius: 0.05
   maximumWallAngle: 60
 --- !u!1 &3497454323975897416

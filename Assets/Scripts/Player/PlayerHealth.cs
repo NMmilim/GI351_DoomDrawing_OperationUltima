@@ -1,7 +1,9 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using TMPro;
 
 /// <summary>
 /// Health, damage receiving, and death handling for the First-Person Hunter.
@@ -16,6 +18,13 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private int _currentHp;
     private bool _isDead;
 
+    [Header("Death Fade")]
+    public float deathFadeDuration = 1.5f;
+
+    [Header("Death UI")]
+    [SerializeField]
+    private GameObject playerStatusUi;
+
     public int  CurrentHp => _currentHp;
     public bool IsDead    => _isDead;
 
@@ -23,6 +32,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private Slider _playerHealthSlider;
     private Image  _damageFlashOverlay;
     private float  _flashTimer;
+    private Image _deathFadeOverlay;
+    private Coroutine _deathFadeCoroutine;
 
     private void Awake()
     {
@@ -78,17 +89,97 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private void Die()
     {
         if (_isDead) return;
+
         _isDead = true;
 
-        // Disable player movement
-        PlayerMovement pm = GetComponent<PlayerMovement>();
-        if (pm != null) pm.enabled = false;
-
-        // Show Defeat Banner
-        if (BossUI.Instance != null)
+        PlayerMovement playerMovement = GetComponent<PlayerMovement>();
+        if (playerMovement != null)
         {
-            BossUI.Instance.ShowDefeatBanner();
+            playerMovement.enabled = false;
         }
+
+        HidePlayerStatusUi();
+
+        BossUI bossUi = FindAnyObjectByType<BossUI>();
+
+        if (bossUi != null)
+        {
+            bossUi.HideGameplayHud();
+        }
+
+        StratagemHUD stratagemHud = FindAnyObjectByType<StratagemHUD>();
+
+        if (stratagemHud != null)
+        {
+            stratagemHud.gameObject.SetActive(false);
+        }
+
+        CreateDeathFadeOverlay();
+
+        if (_deathFadeCoroutine != null)
+        {
+            StopCoroutine(_deathFadeCoroutine);
+        }
+
+        _deathFadeCoroutine = StartCoroutine(FadeToBlack());
+
+        if (bossUi != null)
+        {
+            bossUi.ShowDefeatBanner();
+        }
+    }
+
+    private void CreateDeathFadeOverlay()
+    {
+        Canvas canvas = FindAnyObjectByType<Canvas>();
+
+        if (canvas == null)
+        {
+            GameObject canvasObject = new GameObject("DeathFadeCanvas");
+            canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvasObject.AddComponent<UnityEngine.UI.CanvasScaler>();
+            canvasObject.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+        }
+
+        GameObject overlayObject = new GameObject("DeathFadeOverlay");
+        overlayObject.transform.SetParent(canvas.transform, false);
+        overlayObject.transform.SetAsFirstSibling();
+
+        _deathFadeOverlay = overlayObject.AddComponent<Image>();
+        _deathFadeOverlay.color = new Color(0f, 0f, 0f, 0f);
+        _deathFadeOverlay.raycastTarget = false;
+
+        RectTransform rectTransform =
+            _deathFadeOverlay.rectTransform;
+
+        rectTransform.anchorMin = Vector2.zero;
+        rectTransform.anchorMax = Vector2.one;
+        rectTransform.offsetMin = Vector2.zero;
+        rectTransform.offsetMax = Vector2.zero;
+    }
+
+    private IEnumerator FadeToBlack()
+    {
+        float elapsed = 0f;
+
+        while (elapsed < deathFadeDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+
+            float alpha = Mathf.Clamp01(
+                elapsed / deathFadeDuration);
+
+            Color color = _deathFadeOverlay.color;
+            color.a = alpha;
+            _deathFadeOverlay.color = color;
+
+            yield return null;
+        }
+
+        Color finalColor = _deathFadeOverlay.color;
+        finalColor.a = 1f;
+        _deathFadeOverlay.color = finalColor;
     }
 
     private void BuildPlayerHUD()
@@ -166,5 +257,21 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         fillRT.sizeDelta = Vector2.zero;
 
         _playerHealthSlider.fillRect = fillRT;
+    }
+
+    private void HidePlayerStatusUi()
+    {
+        GameObject playerStatus = GameObject.Find("Player Status");
+
+        if (playerStatus != null)
+        {
+            playerStatus.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "PlayerHealth: Could not find UI object named 'Player Status'.",
+                this);
+        }
     }
 }
