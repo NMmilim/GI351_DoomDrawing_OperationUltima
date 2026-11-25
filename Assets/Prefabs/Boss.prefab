@@ -286,7 +286,7 @@ MonoBehaviour:
   bossName: WRATH
   maxHp: 50000
   enrageThreshold: 0.5
-  damageToStagger: 500
+  damageToStagger: 2500
 --- !u!114 &5647493654526582692
 MonoBehaviour:
   m_ObjectHideFlags: 0
