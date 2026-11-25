@@ -145,16 +145,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StratagemSystem
   airStrikeName: AIR STRIKE
   airStrikeCode: 000000000300000003000000i
-  airStrikeDelay: 3
-  airStrikeCooldown: 12
-  airStrikeDamage: 250
-  airStrikeExplosionRadius: 6
+  airStrikeDelay: 5
+  airStrikeCooldown: 30
+  airStrikeDamage: 5000
+  airStrikeExplosionRadius: 10
   smokeName: SMOKE ORBITAL
   smokeCode: 010000000200000003000000i
   smokeCallDelay: 1
   smokeCooldown: 15
   smokeDuration: 8
   smokeRadius: 9
+  stratagemInputSoundName: Digital_Click
+  airSupportSoundName: AirSupport
+  orbitalStrikeSoundName: OrbitalSmoke
+  airSupportExplosionSoundName: Explosion
+  smokeLandedSoundName: SmokeLanded
 --- !u!1 &6515650697854952350
 GameObject:
   m_ObjectHideFlags: 0

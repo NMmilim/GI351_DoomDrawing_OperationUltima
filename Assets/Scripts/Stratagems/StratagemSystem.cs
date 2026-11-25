@@ -35,6 +35,13 @@ public class StratagemSystem : MonoBehaviour
     public float smokeDuration = 8f;
     public float smokeRadius = 9f;
 
+    [Header("Stratagem Sounds")]
+    public string stratagemInputSoundName = "StratagemInput";
+    public string airSupportSoundName = "AirSupport";
+    public string orbitalStrikeSoundName = "OrbitalStrike";
+    public string airSupportExplosionSoundName = "AirSupportExplosion";
+    public string smokeLandedSoundName = "SmokeLanded";
+
     // Runtime state (read by StratagemHUD)
     public bool IsMenuOpen { get; private set; }
     public IReadOnlyList<StratagemDir> CurrentInput => _currentInput;
@@ -122,6 +129,7 @@ public class StratagemSystem : MonoBehaviour
         if (!pressed.HasValue) return;
 
         _currentInput.Add(pressed.Value);
+        PlayStratagemSound(stratagemInputSoundName);
 
         // Check exact match for Air Strike
         if (_airStrikeCdTimer <= 0f && MatchesExact(airStrikeCode))
@@ -173,6 +181,13 @@ public class StratagemSystem : MonoBehaviour
     {
         _airStrikeCdTimer = airStrikeCooldown;
         _airStrikeIncomingTimer = airStrikeDelay;
+
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySound2D(airSupportSoundName);
+            // Play the jet fighter fly-by when air support is called.
+        }
+
         StartCoroutine(ExecuteAirStrikeRoutine());
     }
 
@@ -201,8 +216,14 @@ public class StratagemSystem : MonoBehaviour
             : fallbackPos;
         Destroy(beacon);
 
-        // Big glowing explosion sphere on the monster
-        SpawnExplosionSphere(strikePos + Vector3.up * 2.0f, airStrikeExplosionRadius);
+        PlayStratagemSound3D(
+            airSupportExplosionSoundName,
+            strikePos);
+
+// Big glowing explosion sphere on the monster
+SpawnExplosionSphere(
+    strikePos + Vector3.up * 2.0f,
+    airStrikeExplosionRadius);
 
         // Force damage onto the Boss
         if (boss != null && !boss.IsDead)
@@ -223,6 +244,10 @@ public class StratagemSystem : MonoBehaviour
                 }
             }
         }
+
+        PlayStratagemSound3D(
+            airSupportExplosionSoundName,
+            strikePos);
     }
 
     private void SpawnExplosionSphere(Vector3 center, float radius)
@@ -253,14 +278,23 @@ public class StratagemSystem : MonoBehaviour
 
     private IEnumerator ExecuteSmokeOrbitalRoutine(Vector3 dropPos)
     {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySound2D(orbitalStrikeSoundName);
+            
+        }
         GameObject beacon = CreateOrbitalBeacon("SmokeBeacon", GetBlueLaserMaterial(), smokeRadius * 0.5f);
         beacon.transform.position = dropPos;
 
         yield return new WaitForSeconds(smokeCallDelay);
         Destroy(beacon);
 
-        // Build swirling ParticleSystem smoke carpet (no flat gray solid spheres clipping the gun!)
-        GameObject smokeRoot = BuildSmokeCarpetVisual(dropPos, smokeRadius);
+        PlayStratagemSound3D(
+            smokeLandedSoundName,
+            dropPos);
+
+// Build swirling ParticleSystem smoke carpet
+GameObject smokeRoot = BuildSmokeCarpetVisual(dropPos, smokeRadius);
 
         SmokeZoneRuntime zone = new SmokeZoneRuntime
         {
@@ -495,6 +529,34 @@ public class StratagemSystem : MonoBehaviour
         public float radius;
         public float remaining;
         public GameObject visualRoot;
+    }
+
+    private void PlayStratagemSound(string soundName)
+    {
+        if (SoundManager.Instance == null)
+        {
+            Debug.LogWarning(
+                "Stratagem sound failed: SoundManager.Instance is missing.",
+                this);
+
+            return;
+        }
+
+        SoundManager.Instance.PlaySound2D(soundName);
+    }
+
+    private void PlayStratagemSound3D(string soundName, Vector3 position)
+    {
+        if (SoundManager.Instance == null)
+        {
+            Debug.LogWarning(
+                "Stratagem 3D sound failed: SoundManager.Instance is missing.",
+                this);
+
+            return;
+        }
+
+        SoundManager.Instance.PlaySound3D(soundName, position);
     }
 }
 

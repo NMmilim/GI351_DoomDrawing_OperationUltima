@@ -79,7 +79,8 @@ public class AwesomeAnimationScript : MonoBehaviour
             currentSpeed = velocity.magnitude;
         }
 
-        bool isSprinting = playerMovement.isSprinting &&
+        bool isSprinting = !isReloading &&
+                           playerMovement.isSprinting &&
                            currentSpeed > playerMovement.DefaultSpeed;
 
         if (anim1 != null)
@@ -191,5 +192,18 @@ public class AwesomeAnimationScript : MonoBehaviour
     private void HandleReloadStateChanged(bool reloadState)
     {
         isReloading = reloadState;
+
+        if (reloadState)
+        {
+            if (anim1 != null)
+            {
+                anim1.SetBool("isSprinting", false);
+            }
+
+            if (anim2 != null)
+            {
+                anim2.SetBool("isSprinting", false);
+            }
+        }
     }
 }
