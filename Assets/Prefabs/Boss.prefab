@@ -324,8 +324,8 @@ MonoBehaviour:
   chargeDistance: 25
   chargeLaneWidth: 3.5
   chargeDamage: 35
-  slamWindup: 2.2
-  slamRadius: 7
+  slamWindup: 3
+  slamRadius: 8
   slamDamage: 40
   magmaProjectilePrefab: {fileID: 5084456497325278897, guid: 30b04392098c1114baacce90a58691e7, type: 3}
   mouthPosition: {fileID: 8309215441374154411}
